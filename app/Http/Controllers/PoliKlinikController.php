@@ -81,6 +81,7 @@ class PoliKlinikController extends Controller
             $value =  $nama['value'];
             $dataSet[$index] = $value;
         }
+
         $data_pemeriksaan = [
             'counter' => $dataSet['counter'],
             'kodekunjungan' => $dataSet['kodekunjungan'],
