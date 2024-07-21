@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
-    <title>Login 08</title>
+    <title>4Medics</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/x-icon" href="{{ asset('public/img/4medics2.png')}}">
 
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 

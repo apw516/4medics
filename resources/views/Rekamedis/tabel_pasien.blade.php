@@ -18,10 +18,10 @@
                 <td>{{ $p->jenis_kelamin }}</td>
                 <td>{{ $p->alamat }}</td>
                 <td>
-                    <button class="btn btn-success pilihpasien" rm="{{ $p->no_rm }}"><i
+                    <button class="btn btn-xs btn-success pilihpasien" rm="{{ $p->no_rm }}"><i
                             class="bi bi-r-square"></i></button>
-                    <button class="btn btn-warning editpasien" rm="{{ $p->no_rm }}"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger hapuspasien" rm="{{ $p->no_rm }}" nama="{{ $p->nama_pasien }}"><i
+                    <button class="btn btn-xs btn-warning editpasien" rm="{{ $p->no_rm }}"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-xs btn-danger hapuspasien" rm="{{ $p->no_rm }}" nama="{{ $p->nama_pasien }}"><i
                             class="bi bi-file-earmark-x"></i></button>
                 </td>
             </tr>
