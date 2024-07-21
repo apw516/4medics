@@ -127,16 +127,16 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Provinsi</label>
                                     <div class="col-md-2">
-                                        <input readonly type="text" class="form-control" id="provinsi"
-                                            name="provinsi" placeholder="pilih provinsi ...">
+                                        <input type="text" class="form-control" id="provinsi" name="provinsi"
+                                            placeholder="pilih provinsi ...">
                                         <input type="text" hidden class="form-control" id="idprovinsi"
                                             name="idprovinsi" placeholder="pilih desa ...">
                                     </div>
                                     <label for="inputPassword"
                                         class="col-sm-1 col-form-label text-right">Kabupaten</label>
                                     <div class="col-md-2">
-                                        <input readonly type="text" class="form-control" id="kabupaten"
-                                            name="kabupaten" placeholder="pilih kabupaten ...">
+                                        <input type="text" class="form-control" id="kabupaten" name="kabupaten"
+                                            placeholder="pilih kabupaten ...">
                                         <input type="text" hidden class="form-control" id="idkabupaten"
                                             name="idkabupaten" placeholder="pilih desa ...">
                                     </div>
@@ -144,8 +144,8 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-2 col-form-label">Kecamatan</label>
                                     <div class="col-md-2">
-                                        <input readonly type="text" class="form-control" id="kecamatan"
-                                            name="kecamatan" placeholder="pilih kecamatan ...">
+                                        <input type="text" class="form-control" id="kecamatan" name="kecamatan"
+                                            placeholder="pilih kecamatan ...">
                                         <input type="text" hidden class="form-control" id="idkecamatan"
                                             name="idkecamatan" placeholder="pilih desa ...">
                                     </div>
@@ -192,21 +192,42 @@
         }
         $(document).ready(function() {
             caripasien()
+            $('#provinsi').autocomplete({
+                source: "<?= route('cariprovinsi') ?>",
+                select: function(event, ui) {
+                    $('[id="provinsi"]').val(ui.item.label);
+                    $('[id="idprovinsi"]').val(ui.item.kode);
+                }
+            });
+            $('#kabupaten').autocomplete({
+                source: "<?= route('carikabupaten') ?>",
+                select: function(event, ui) {
+                    $('[id="kabupaten"]').val(ui.item.label);
+                    $('[id="idkabupaten"]').val(ui.item.kode);
+                }
+            });
+            $('#kecamatan').autocomplete({
+                source: "<?= route('carikecamatan') ?>",
+                select: function(event, ui) {
+                    $('[id="kecamatan"]').val(ui.item.label);
+                    $('[id="idkecamatan"]').val(ui.item.kode);
+                }
+            });
             $('#desa').autocomplete({
-                source: "<?= route('caridesa') ?>",
+                source: function(request, response) {
+                    $.getJSON("<?= route('caridesa') ?>", {
+                            id: $('#idkecamatan').val(),
+                            desa: $('#desa').val(),
+                        },
+                        response);
+                },
                 select: function(event, ui) {
                     $('[id="desa"]').val(ui.item.label);
-                    $('[id="iddesa"]').val(ui.item.kode_desa);
-                    $('[id="kecamatan"]').val(ui.item.nama_kecamatan);
-                    $('[id="idkecamatan"]').val(ui.item.kode_kecamatan);
-                    $('[id="kabupaten"]').val(ui.item.nama_kabupaten);
-                    $('[id="idkabupaten"]').val(ui.item.kode_kabupaten);
-                    $('[id="provinsi"]').val(ui.item.nama_prov2);
-                    $('[id="idprovinsi"]').val(ui.item.kode_prov);
-                    $('#desa').val(ui.item.label2);
+                    $('[id="iddesa"]').val(ui.item.kode);
                 }
             });
         });
+
 
         function caripasien() {
             rm = $('#norm').val()
@@ -274,6 +295,10 @@
                             text: data.message,
                             footer: ''
                         })
+                        formpencarianpasien()
+                        $('#norm').val(data.rm)
+                        caripasien()
+                        $('.v_form_pasien_baru').find('input:text').val('');
                     }
                 }
             });

@@ -32,17 +32,21 @@ Route::get('/dashboard', [DashboardController::class, 'Index'])->name('dashboard
 Route::get('/pendaftaran', [RekamedisController::class, 'Index'])->name('pendaftaran');
 Route::get('/riwayatpendaftaran', [RekamedisController::class, 'riwayatPendaftaran'])->name('riwayatpendaftaran');
 Route::post('/simpanpasienbaru', [RekamedisController::class, 'simpanPasienBaru'])->name('simpanpasienbaru');
+Route::post('/simpaneditpasien', [RekamedisController::class, 'simpanEditPasien'])->name('simpaneditpasien');
 Route::post('/simpanpendaftaran', [RekamedisController::class, 'simpanPendaftaran'])->name('simpanpendaftaran');
 Route::post('/simpaneditkunjungan', [RekamedisController::class, 'simpanEditKunjungan'])->name('simpaneditkunjungan');
 Route::post('/caridatapasien', [RekamedisController::class, 'cariDataPasien'])->name('cari_data_pasien');
 Route::post('/ambilformpendaftaran', [RekamedisController::class, 'ambilFormPendaftaran'])->name('ambilformpendaftaran');
+Route::post('/ambilformeditpasien', [RekamedisController::class, 'ambilFormEditPasien'])->name('ambilformeditpasien');
 Route::post('/ambil_detail_kunjungan', [RekamedisController::class, 'ambilDetailKunjungan'])->name('ambil_detail_kunjungan');
 Route::post('/cari_riwayat_pendaftaran', [RekamedisController::class, 'ambilRiwayatDaftar'])->name('cari_riwayat_pendaftaran');
 Route::get('/caridesa', [RekamedisController::class, 'cariDesa'])->name('caridesa');
+Route::get('/cariprovinsi', [RekamedisController::class, 'cariProvinsi'])->name('cariprovinsi');
+Route::get('/carikabupaten', [RekamedisController::class, 'cariKabupaten'])->name('carikabupaten');
+Route::get('/carikecamatan', [RekamedisController::class, 'cariKecamatan'])->name('carikecamatan');
 Route::get('/cariunit', [RekamedisController::class, 'cariUnit'])->name('cariunit');
 Route::get('/caridokter', [RekamedisController::class, 'cariDokter'])->name('caridokter');
-
-
+Route::post('/hapuspasien', [RekamedisController::class, 'hapusPasien'])->name('hapuspasien');
 
 
 
