@@ -59,8 +59,8 @@ class PoliKlinikController extends Controller
         $kodekunjungan = $request->kode_kunjungan;
         $kunjungan = DB::connection('mysql2')->select('select * from ts_kunjungan where kode_kunjungan = ?', [$kodekunjungan]);
         $mt_pasien = DB::connection('mysql2')->select('select *,fc_alamat(no_rm) as alamat2,date(tgl_lahir) as tgl_lahir2 from mt_pasien where no_rm = ?', [$kunjungan[0]->no_rm]);
-        $cekassesmen = DB::connection('mysql2')->select('select * from erm_assesmen_medis where kodekunjungan = ?', [$kodekunjungan]);
         $rm = $mt_pasien[0]->no_rm;
+        $cekassesmen = DB::connection('mysql2')->select('select * from erm_assesmen_medis where no_rm = ? and id = (select max(id) as id from erm_assesmen_medis where no_rm = ?)', [$rm,$rm]);
         return view('Poliklinik.index_erm', compact([
             'mt_pasien', 'kunjungan','cekassesmen','rm'
         ]));
