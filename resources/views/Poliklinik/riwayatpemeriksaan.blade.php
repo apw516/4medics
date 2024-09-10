@@ -65,6 +65,29 @@
                                 </td>
                             </tr>
                         </table>
+                        <div class="card">
+                            <div class="card-header">Riwayat Obat</div>
+                            <div class="card-body">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <th>Nama Obat</th>
+                                        <th>QTY</th>
+                                        <th>Aturan Pakai</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($dt2 as $d)
+                                            @if($d->kode_kunjungan == $as->kodekunjungan )
+                                            <tr>
+                                                <td>{{ $d->keterangan01}}</td>
+                                                <td>{{ $d->jumlah_layanan}}</td>
+                                                <td>{{ $d->aturan_pakai}}</td>
+                                            </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="timeline-footer">
                         <a href="#" class="btn btn-info btn-sm"><i class="bi bi-printer-fill mr-1"></i> Print</a>

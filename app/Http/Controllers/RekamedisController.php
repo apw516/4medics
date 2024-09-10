@@ -14,8 +14,9 @@ class RekamedisController extends Controller
     public function Index()
     {
         $menu = 'pendaftaran';
+        $date = $this->get_date();
         return view('Rekamedis.pendaftaran', compact([
-            'menu'
+            'menu','date'
         ]));
     }
     public function riwayatPendaftaran()
@@ -329,6 +330,15 @@ class RekamedisController extends Controller
         ,fc_NAMA_PARAMEDIS1(kode_paramedis) AS nama_dokter
         ,pic,fc_nama_unit1(kode_unit) as nama_unit FROM ts_kunjungan WHERE DATE(tgl_masuk) BETWEEN ? AND ? ORDER BY kode_kunjungan DESC', [$request->awal, $request->akhir]);
         return view('Rekamedis.tabel_riwayat_pendaftaran', compact([
+            'riwayat'
+        ]));
+    }
+    public function ambilRiwayatDaftarToday(Request $request)
+    {
+        $riwayat = DB::connection('mysql2')->select('SELECT kode_kunjungan,status_kunjungan,counter,tgl_masuk,no_rm,fc_nama_px(no_rm) AS nama_pasien
+        ,fc_NAMA_PARAMEDIS1(kode_paramedis) AS nama_dokter
+        ,pic,fc_nama_unit1(kode_unit) as nama_unit FROM ts_kunjungan WHERE DATE(tgl_masuk) = ? ORDER BY kode_kunjungan DESC', [$request->tanggalriwayat]);
+        return view('Rekamedis.tabel_riwayat_pendaftaran_today', compact([
             'riwayat'
         ]));
     }
