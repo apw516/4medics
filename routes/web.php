@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
 use Illuminate\Support\Facades\Route;
@@ -60,3 +61,12 @@ Route::post('/simpanpemeriksaan', [PoliKlinikController::class, 'simpanPemeriksa
 Route::post('/ambil_riwayat_pemeriksaan', [PoliKlinikController::class, 'ambilRiwayatPemeriksaan'])->name('ambil_riwayat_pemeriksaan');
 Route::post('/ambil_data_pemeriksaan_pasien', [PoliKlinikController::class, 'ambilDataPemeriksaanPasien'])->name('ambil_data_pemeriksaan_pasien');
 // Route::get('/testa', [PoliKlinikController::class, 'testapi'])->name('test');
+
+
+
+//data master
+Route::get('/masterunit', [MasterController::class, 'indexMasterUnit'])->name('masterunit');
+Route::post('/ambilmasterunit', [MasterController::class, 'ambilMaterUnit'])->name('ambilmasterunit');
+Route::post('/simpanunitbaru', [MasterController::class, 'simpanUnitBaru'])->name('simpanunitbaru');
+Route::post('/ambil_detail_unit', [MasterController::class, 'ambilDetailUnit'])->name('ambil_detail_unit');
+Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');

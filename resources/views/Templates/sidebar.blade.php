@@ -2,9 +2,10 @@
 <aside class="main-sidebar sidebar-dark-danger elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link bg-dark">
-        <img src="{{ asset('public/img/4medics2.png') }}" alt="4medics"
-            class="brand-image img-circle " style="opacity: .8">
-        <span class="brand-text font-weight-light"><img width="40%"src="{{ asset('public/img/4medics3.png')}}" alt=""></span>
+        <img src="{{ asset('public/img/4medics2.png') }}" alt="4medics" class="brand-image img-circle "
+            style="opacity: .8">
+        <span class="brand-text font-weight-light"><img width="40%"src="{{ asset('public/img/4medics3.png') }}"
+                alt=""></span>
     </a>
 
     <!-- Sidebar -->
@@ -31,43 +32,65 @@
                         </p>
                     </a>
                 </li>
-                @if(auth()->user()->hak_akses == 1 || auth()->user()->hak_akses == 2)
-                <li class="nav-header">REKAMEDIS</li>
-                <li class="nav-item">
-                    <a href="{{ route('pendaftaran')}}"
-                        class="nav-link @if ($menu == 'pendaftaran') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
-                        <p class="text">Pendaftaran</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('riwayatpendaftaran')}}"
-                        class="nav-link @if ($menu == 'riwayatpendaftaran') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
-                        <p class="text">Riwayat Pendaftaran</p>
-                    </a>
-                </li>
+                @if (auth()->user()->hak_akses == 1 || auth()->user()->hak_akses == 2)
+                    <li class="nav-header">REKAMEDIS</li>
+                    <li class="nav-item">
+                        <a href="{{ route('pendaftaran') }}"
+                            class="nav-link @if ($menu == 'pendaftaran') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Pendaftaran</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('riwayatpendaftaran') }}"
+                            class="nav-link @if ($menu == 'riwayatpendaftaran') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Riwayat Pendaftaran</p>
+                        </a>
+                    </li>
                 @endif
-                @if(auth()->user()->hak_akses == 1 || auth()->user()->hak_akses == 3)
-                <li class="nav-header">POLIKLINIK</li>
+                @if (auth()->user()->hak_akses == 1 || auth()->user()->hak_akses == 3)
+                    <li class="nav-header">POLIKLINIK</li>
+                    <li class="nav-item">
+                        <a href="{{ route('datapasienpoliklinik') }}"
+                            class="nav-link @if ($menu == 'datapasien_erm') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Data Pasien</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('riwayatpemeriksaan') }}"
+                            class="nav-link @if ($menu == 'riwayatpemeriksaan') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Riwayat Pemeriksaan</p>
+                        </a>
+                    </li>
+                @endif
+                <li class="nav-header">MASTER DATA</li>
                 <li class="nav-item">
-                    <a href="{{ route('datapasienpoliklinik')}}"
-                        class="nav-link @if ($menu == 'datapasien_erm') active @endif">
+                    <a href="{{ route('masterunit') }}"
+                        class="nav-link @if ($menu == 'masterunit') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>
-                        <p class="text">Data Pasien</p>
+                        <p class="text">Master Unit</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('riwayatpemeriksaan')}}"
+                    <a href="{{ route('riwayatpemeriksaan') }}"
                         class="nav-link @if ($menu == 'riwayatpemeriksaan') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>
-                        <p class="text">Riwayat Pemeriksaan</p>
+                        <p class="text">Master User</p>
                     </a>
                 </li>
-                @endif
+                <li class="nav-item">
+                    <a href="{{ route('riwayatpemeriksaan') }}"
+                        class="nav-link @if ($menu == 'riwayatpemeriksaan') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Pegawai</p>
+                    </a>
+                </li>
                 <li class="nav-header">Akun</li>
                 <li class="nav-item">
-                    <a href="{{ route('infoakun')}}" class="nav-link @if($menu == 'infoakun') active @endif">
+                    <a href="{{ route('infoakun') }}" class="nav-link @if ($menu == 'infoakun') active @endif">
                         <i class="nav-icon far fa-circle text-info"></i>
                         <p class="text">Info Akun</p>
                     </a>
