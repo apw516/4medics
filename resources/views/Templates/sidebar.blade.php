@@ -75,17 +75,24 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('riwayatpemeriksaan') }}"
-                        class="nav-link @if ($menu == 'riwayatpemeriksaan') active @endif">
+                    <a href="{{ route('masteruser') }}"
+                        class="nav-link @if ($menu == 'masteruser') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>
                         <p class="text">Master User</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('riwayatpemeriksaan') }}"
-                        class="nav-link @if ($menu == 'riwayatpemeriksaan') active @endif">
+                    <a href="{{ route('masterpegawai') }}"
+                        class="nav-link @if ($menu == 'masterpegawai') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>
                         <p class="text">Master Pegawai</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('masterpasien') }}"
+                        class="nav-link @if ($menu == 'masterpasien') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Pasien</p>
                     </a>
                 </li>
                 <li class="nav-header">Akun</li>

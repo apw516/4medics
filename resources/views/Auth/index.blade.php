@@ -59,7 +59,7 @@
                                     </label>
                                 </div>
                                 <div class="w-10 text-md-right">
-                                    <a href="" style="color:blue">Daftar</a>
+                                    <a href="{{ route('/register')}}" style="color:blue">Daftar</a>
                                 </div>
                             </div>
                             <div class="form-group">

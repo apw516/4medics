@@ -13,16 +13,17 @@
                 <th>Action</th>
             </thead>
             <tbody>
-                @foreach ($data as $d )
+                @foreach ($data as $d)
                     <tr>
-                        <td>{{ $d->tgl_masuk}}</td>
-                        <td>{{ $d->counter}}</td>
-                        <td>{{ $d->no_rm}}</td>
-                        <td>{{ $d->nama_pasien}}</td>
-                        <td>{{ $d->alamat}}</td>
-                        <td>{{ $d->nama_unit}}</td>
-                        <td>{{ $d->nama_dokter}}</td>
-                        <td><button class="btn btn-success btn-sm pilihpasien" kode_kunjungan={{ $d->kode_kunjungan}}><i class="bi bi-journal-plus r-2"></i></button></td>
+                        <td>{{ $d->tgl_masuk }}</td>
+                        <td>{{ $d->counter }}</td>
+                        <td>{{ $d->no_rm }}</td>
+                        <td>{{ $d->nama_pasien }}</td>
+                        <td>{{ $d->alamat }}</td>
+                        <td>{{ $d->nama_unit }}</td>
+                        <td>{{ $d->nama_dokter }}</td>
+                        <td><button class="btn btn-success btn-sm pilihpasien" kode_kunjungan={{ $d->kode_kunjungan }}><i
+                                    class="bi bi-journal-plus r-2"></i></button></td>
                     </tr>
                 @endforeach
             </tbody>
