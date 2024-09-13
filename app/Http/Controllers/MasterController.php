@@ -49,7 +49,7 @@ class MasterController extends Controller
     }
     public function ambilBerkasErm(Request $request)
     {
-        $erm = db::select('select * from ts_kunjungan where no_rm = ?',[$request->rm]);
+        $erm = db::select('select *,fc_nama_unit1(a.kode_unit) as nama_unit,fc_NAMA_PARAMEDIS1(a.kode_paramedis) as nama_dokter from ts_kunjungan a left outer join erm_assesmen_medis b on a.kode_kunjungan = b.kodekunjungan where a.no_rm = ? order by a.counter desc',[$request->rm]);
         $pasien = DB::connection('mysql2')->select('select *,date(tgl_lahir) as tgl_lahir,fc_alamat(no_rm) as alamat from mt_pasien where no_rm = ?', [$request->rm]);
         return view('Master.berkas_erm', compact([
             'erm','pasien'

@@ -12,35 +12,30 @@
     </div>
     <!-- info row -->
     <div class="row invoice-info">
-        <div class="col-sm-4 invoice-col">
-            From
-            <address>
-                <strong>Admin, Inc.</strong><br>
-                795 Folsom Ave, Suite 600<br>
-                San Francisco, CA 94107<br>
-                Phone: (804) 123-5432<br>
-                Email: info@almasaeedstudio.com
-            </address>
-        </div>
-        <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
-            To
-            <address>
-                <strong>John Doe</strong><br>
-                795 Folsom Ave, Suite 600<br>
-                San Francisco, CA 94107<br>
-                Phone: (555) 539-1037<br>
-                Email: john.doe@example.com
-            </address>
-        </div>
-        <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
-            <b>Invoice #007612</b><br>
-            <br>
-            <b>Order ID:</b> 4F3S8J<br>
-            <b>Payment Due:</b> 2/22/2014<br>
-            <b>Account:</b> 968-34567
-        </div>
+        <table class="table table-sm table-bordered">
+            <tr>
+                <td width="15%" class="text-bold">Nomor RM</td>
+                <td class="font-italic">{{ $pasien[0]->no_rm }}</td>
+                <td width="15%" class="text-bold">Nomor Identitas</td>
+                <td class="font-italic">{{ $pasien[0]->nik_bpjs }}</td>
+            </tr>
+            <tr>
+                <td width="15%" class="text-bold">Nama Pasien</td>
+                <td  class="font-italic"colspan="3">{{ $pasien[0]->nama_px }}</td>
+            </tr>
+            <tr>
+                <td width="15%" class="text-bold">Jenis Kelamin</td>
+                <td class="font-italic" colspan="3">@if($pasien[0]->jenis_kelamin == 'L') Laki - laki @else Perempuan @endif</td>
+            </tr>
+            <tr>
+                <td width="15%" class="text-bold">Tempat, Tanggal lahir</td>
+                <td class="font-italic" colspan="3">{{ $pasien[0]->tempat_lahir }},{{ $pasien[0]->tgl_lahir }}</td>
+            </tr>
+            <tr>
+                <td width="15%" class="text-bold">Alamat</td>
+                <td  class="font-italic"colspan="3">{{ $pasien[0]->alamat }}</td>
+            </tr>
+        </table>
         <!-- /.col -->
     </div>
     <!-- /.row -->
@@ -48,7 +43,61 @@
     <!-- Table row -->
     <div class="row">
         <div class="col-12 table-responsive">
-            <table class="table table-striped">
+            @foreach ($erm as $e)
+            <div class="card">
+                <div class="card-header bg-light text-bold">Dokter : {{ $e->nama_dokter }} | Unit : {{ $e->nama_unit }} | Tanggal Kunjungan : {{ $e->tgl_masuk }} <h4 class="float-right text-bold">Kunjungan ke : {{ $e->counter}}</h5></div>
+                <div class="card-body">
+                    <div class="timeline-body">
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td colspan="2" class="text-center text-bold bg-light">Tanda Tanda Vital</td>
+                            </tr>
+                            <tr>
+                                <td width="60%">
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Tekanan
+                                            Darah</label>
+                                        <div class="col-sm-5">
+                                            {{ $e->tekanan_darah }} mm Hg
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-4 col-form-label">Suhu Tubuh</label>
+                                        <div class="col-sm-5">
+                                            {{ $e->suhu_tubuh }} °C
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-italic" colspan="2">
+                                    Subject ( S ) : {{ trim($e->subject) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-italic" colspan="2">
+                                    Object ( O ) : {{ trim($e->object) }}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-italic" colspan="2">
+                                    Assesment ( A ) : {{ trim($e->assesment) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-italic" colspan="1">
+                                    PLanning ( P ) : {{ trim($e->planning) }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            {{-- <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Qty</th>
@@ -88,54 +137,13 @@
                         <td>$25.99</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
         </div>
         <!-- /.col -->
     </div>
     <!-- /.row -->
 
-    <div class="row">
-        <!-- accepted payments column -->
-        <div class="col-6">
-            <p class="lead">Payment Methods:</p>
-            <img src="../../dist/img/credit/visa.png" alt="Visa">
-            <img src="../../dist/img/credit/mastercard.png" alt="Mastercard">
-            <img src="../../dist/img/credit/american-express.png" alt="American Express">
-            <img src="../../dist/img/credit/paypal2.png" alt="Paypal">
 
-            <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem
-                plugg
-                dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
-            </p>
-        </div>
-        <!-- /.col -->
-        <div class="col-6">
-            <p class="lead">Amount Due 2/22/2014</p>
-
-            <div class="table-responsive">
-                <table class="table">
-                    <tr>
-                        <th style="width:50%">Subtotal:</th>
-                        <td>$250.30</td>
-                    </tr>
-                    <tr>
-                        <th>Tax (9.3%)</th>
-                        <td>$10.34</td>
-                    </tr>
-                    <tr>
-                        <th>Shipping:</th>
-                        <td>$5.80</td>
-                    </tr>
-                    <tr>
-                        <th>Total:</th>
-                        <td>$265.24</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <!-- /.col -->
-    </div>
     <!-- /.row -->
 
     <!-- this row will not appear when printing -->
@@ -143,12 +151,6 @@
         <div class="col-12">
             <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i
                     class="fas fa-print"></i> Print</a>
-            <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
-                Payment
-            </button>
-            <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-                <i class="fas fa-download"></i> Generate PDF
-            </button>
         </div>
     </div>
 </div>
