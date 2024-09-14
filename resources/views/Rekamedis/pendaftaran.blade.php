@@ -25,6 +25,8 @@
                     Baru</button>
                 <button class="btn btn-primary" onclick="formpencarianpasien()"><i class="bi bi-eye mr-1"></i> Pencarian
                     Pasien</button>
+                <button class="btn btn-warning" onclick="riwayatpendaftaran()"><i class="bi bi-eye mr-1"></i> Riwayat
+                    Pendaftaran</button>
                 <div class="v_pencarianpasien">
                     <div class="card mt-3">
                         <div class="card-header text-bold ">Pencarian Pasien</div>
@@ -172,6 +174,32 @@
                         </div>
                     </div>
                 </div>
+                <div hidden class="v_riwayat_pendaftaran">
+                    <div class="card mt-3">
+                        <div class="card-header text-bold bg-warning">Riwayat Pendafaran</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Tanggal Riwayat</label>
+                                        <input type="date" class="form-control" id="tanggalriwayat"
+                                            aria-describedby="emailHelp" value="{{ $date }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success" style="margin-top:32px" onclick="caririwayat()"><i
+                                            class="bi bi-search mr-2"></i>Cari
+                                        Riwayat</button>
+                                </div>
+                            </div>
+                            <div class="v_r_daftar">
+
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
             </div>
             <div hidden class="v_kedua">
 
@@ -184,14 +212,24 @@
         function ambilformpasienbaru() {
             $('.v_pencarianpasien').attr('hidden', true)
             $('.v_form_pasien_baru').removeAttr('hidden', true)
+            $('.v_riwayat_pendaftaran').attr('hidden', true)
         }
 
         function formpencarianpasien() {
             $('.v_pencarianpasien').removeAttr('hidden', true)
             $('.v_form_pasien_baru').attr('hidden', true)
+            $('.v_riwayat_pendaftaran').attr('hidden', true)
         }
+
+        function riwayatpendaftaran() {
+            $('.v_riwayat_pendaftaran').removeAttr('hidden', true)
+            $('.v_pencarianpasien').attr('hidden', true)
+            $('.v_form_pasien_baru').attr('hidden', true)
+        }
+
         $(document).ready(function() {
             caripasien()
+            caririwayat()
             $('#provinsi').autocomplete({
                 source: "<?= route('cariprovinsi') ?>",
                 select: function(event, ui) {
@@ -300,6 +338,28 @@
                         caripasien()
                         $('.v_form_pasien_baru').find('input:text').val('');
                     }
+                }
+            });
+        }
+
+        function caririwayat() {
+            tanggalriwayat = $('#tanggalriwayat').val()
+            spinner = $('#loader')
+            spinner.show();
+            $.ajax({
+                type: 'post',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    tanggalriwayat
+                },
+                url: '<?= route('cari_riwayat_pendaftaran_today') ?>',
+                error: function(response) {
+                    spinner.hide()
+                    alert('error')
+                },
+                success: function(response) {
+                    spinner.hide()
+                    $('.v_r_daftar').html(response);
                 }
             });
         }
