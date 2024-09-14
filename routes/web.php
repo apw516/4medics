@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', [AuthController::class, 'Index'])->name('/login');
+Route::get('/register', [AuthController::class, 'register'])->name('/register');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('login');
+Route::post('register', [AuthController::class, 'post'])->name('register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/infoakun', [AuthController::class, 'Infoakun'])->name('infoakun');
 
@@ -68,6 +71,7 @@ Route::post('/batalorderresep', [PoliKlinikController::class, 'batalOrderResep']
 Route::post('/ambil_detail_resep', [PoliKlinikController::class, 'ambil_detail_resep'])->name('ambil_detail_resep');
 // Route::get('/testa', [PoliKlinikController::class, 'testapi'])->name('test');
 
+
 //farmasi
 Route::get('/farmasimasterbarang', [FarmasiController::class, 'farmasimasterbarang'])->name('farmasimasterbarang');
 Route::get('/farmasiorderresep', [FarmasiController::class, 'farmasiorderresep'])->name('farmasiorderresep');
@@ -85,4 +89,24 @@ Route::post('/ambil_detail_layanan', [FarmasiController::class, 'ambilDetailLaya
 Route::post('/cari_obat_farmasi', [FarmasiController::class, 'cariObatFarmasi'])->name('cari_obat_farmasi');
 Route::post('/hitungorderanfarmasi', [FarmasiController::class, 'hitungOrderanFarmasi'])->name('hitungorderanfarmasi');
 Route::post('/simpanorderan', [FarmasiController::class, 'simpanLayananResep'])->name('simpanorderan');
-Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananresep');
+Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananr
+
+
+//data master
+Route::get('/masterpasien', [MasterController::class, 'indexMasterPasien'])->name('masterpasien');
+Route::get('/masterunit', [MasterController::class, 'indexMasterUnit'])->name('masterunit');
+Route::get('/masteruser', [MasterController::class, 'indexMasterUser'])->name('masteruser');
+Route::post('/ambil_master_pasien', [MasterController::class, 'ambilMasterPasien'])->name('ambil_master_pasien');
+Route::get('/masterpegawai', [MasterController::class, 'indexMasterPegawai'])->name('masterpegawai');
+Route::post('/ambilmasterunit', [MasterController::class, 'ambilMaterUnit'])->name('ambilmasterunit');
+Route::post('/ambilmasteruser', [MasterController::class, 'ambilMaterUser'])->name('ambilmasteruser');
+Route::post('/ambilmasterpergawai', [MasterController::class, 'ambilMaterPegawai'])->name('ambilmasterpergawai');
+Route::post('/ambilberkaserm', [MasterController::class, 'ambilBerkasErm'])->name('ambilberkaserm');
+Route::post('/simpanunitbaru', [MasterController::class, 'simpanUnitBaru'])->name('simpanunitbaru');
+Route::post('/simpanpegawaibaru', [MasterController::class, 'simpanPegawaiBaru'])->name('simpanpegawaibaru');
+Route::post('/ambil_detail_unit', [MasterController::class, 'ambilDetailUnit'])->name('ambil_detail_unit');
+Route::post('/ambil_detail_user', [MasterController::class, 'ambilDetailUser'])->name('ambil_detail_user');
+Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegawai'])->name('ambil_detail_pegawai');
+Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');
+Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
+Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');

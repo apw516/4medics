@@ -48,7 +48,6 @@
                             <p class="text">Riwayat Pendaftaran</p>
                         </a>
                     </li>
-
                 @endif
                 @if (auth()->user()->hak_akses == 1 || auth()->user()->hak_akses == 3)
                     <li class="nav-header">POLIKLINIK</li>
@@ -82,6 +81,35 @@
                         </a>
                     </li>
                 @endif
+                <li class="nav-header">MASTER DATA</li>
+                <li class="nav-item">
+                    <a href="{{ route('masterunit') }}"
+                        class="nav-link @if ($menu == 'masterunit') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Unit</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('masteruser') }}"
+                        class="nav-link @if ($menu == 'masteruser') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master User</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('masterpegawai') }}"
+                        class="nav-link @if ($menu == 'masterpegawai') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Pegawai</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('masterpasien') }}"
+                        class="nav-link @if ($menu == 'masterpasien') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Pasien</p>
+                    </a>
+                </li>
                 <li class="nav-header">Akun</li>
                 <li class="nav-item">
                     <a href="{{ route('infoakun') }}" class="nav-link @if ($menu == 'infoakun') active @endif">

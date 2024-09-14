@@ -7,12 +7,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
     public function Index()
     {
         return view('Auth.index');
+    }
+    public function register()
+    {
+        $unit = db::select('select * from mt_unit');
+        return view('Auth.register',compact([
+            'unit'
+        ]));
     }
     public function authenticate(Request $request)
     {
@@ -28,6 +36,29 @@ class AuthController extends Controller
         }
         return back()->with('loginError', 'Login gagal !');
     }
+    public function post(Request $request)
+    {
+        $validateData = $request ->validate([
+           'namalengkap' => 'required|max:255',
+           'username' => ['required','min:3','max:255','unique:user'],
+           'hakakses' =>'required',
+           'unit' =>'required',
+           'password' => 'required|min:5|max:255|same:password2'
+        ]);
+        $validateData['password'] = Hash::make($validateData['password']);
+        $validateData['tanggal_entry'] = $this->get_now();
+        $datauser = [
+            'username' => $validateData['username'],
+            'nama' => $validateData['namalengkap'],
+            'password' => $validateData['password'],
+            'hak_akses' => $validateData['hakakses'],
+            'unit' => $validateData['unit'],
+            'tgl_entry' => $validateData['tanggal_entry'],
+        ];
+        User::create($datauser);
+        // $request->session()->flash('success','Registration successful, Please Login');
+        return redirect('/')->with('success','Registration successful, Please Login');
+    }
     public function Infoakun()
     {
         $menu = "infoakun";
@@ -35,6 +66,28 @@ class AuthController extends Controller
         return view('Auth.infoakun',compact([
             'menu','data'
         ]));
+    }
+    public function get_time()
+    {
+        $dt = Carbon::now()->timezone('Asia/Jakarta');
+        $date = $dt->toDateString();
+        $time = $dt->toTimeString();
+        return $time;
+    }
+    public function get_now()
+    {
+        $dt = Carbon::now()->timezone('Asia/Jakarta');
+        $date = $dt->toDateString();
+        $time = $dt->toTimeString();
+        $now = $date . ' ' . $time;
+        return $now;
+    }
+    public function get_date()
+    {
+        $dt = Carbon::now()->timezone('Asia/Jakarta');
+        $date = $dt->toDateString();
+        $now = $date;
+        return $now;
     }
     public function logout(Request $request)
     {
