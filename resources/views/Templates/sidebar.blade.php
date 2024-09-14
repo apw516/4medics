@@ -81,6 +81,7 @@
                         </a>
                     </li>
                 @endif
+                @if (auth()->user()->hak_akses == 1)
                 <li class="nav-header">MASTER DATA</li>
                 <li class="nav-item">
                     <a href="{{ route('masterunit') }}"
@@ -110,6 +111,7 @@
                         <p class="text">Master Pasien</p>
                     </a>
                 </li>
+                @endif
                 <li class="nav-header">Akun</li>
                 <li class="nav-item">
                     <a href="{{ route('infoakun') }}" class="nav-link @if ($menu == 'infoakun') active @endif">

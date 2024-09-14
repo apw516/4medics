@@ -115,12 +115,12 @@
         </div>
     </div>
     <div class="wrapper">
-        @include('templates.navbar')
-        @include('templates.sidebar')
+        @include('Templates.navbar')
+        @include('Templates.sidebar')
         <div class="content-wrapper">
             @yield('container')
         </div>
-        @include('templates.footer')
+        @include('Templates.footer')
     </div>
 </body>
 
