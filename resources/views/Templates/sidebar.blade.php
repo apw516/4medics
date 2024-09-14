@@ -65,6 +65,21 @@
                             <p class="text">Riwayat Pemeriksaan</p>
                         </a>
                     </li>
+                    <li class="nav-header">Farmasi</li>
+                    <li class="nav-item">
+                        <a href="{{ route('farmasiorderresep') }}"
+                            class="nav-link @if ($menu == 'dataorder') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Data Order</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('farmasimasterbarang') }}"
+                            class="nav-link @if ($menu == 'masterbarang') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Master Barang</p>
+                        </a>
+                    </li>
                 @endif
                 <li class="nav-header">MASTER DATA</li>
                 <li class="nav-item">

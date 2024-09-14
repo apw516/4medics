@@ -10,14 +10,14 @@
         <label for="exampleFormControlInput1">Dokter Pemeriksa</label>
         <input type="text" class="form-control"  placeholder="name@example.com"
             value="{{ $kunjungan[0]->nama_dokter }}" id="namadokter" name="namadokter">
-        <input readonly type="text" class="form-control" id="kodeparamedis" name="kodeparamedis" placeholder="name@example.com"
+        <input hidden readonly type="text" class="form-control" id="kodeparamedis" name="kodeparamedis" placeholder="name@example.com"
             value="{{ $kunjungan[0]->kode_paramedis }}">
     </div>
     <div class="form-group">
         <label for="exampleFormControlInput1">Unit Tujuan</label>
         <input type="text" class="form-control"  placeholder="name@example.com"
             value="{{ $kunjungan[0]->nama_unit }}" id="namaunit" name="namaunit">
-        <input readonly type="text" class="form-control" id="kodeunit" name="kodeunit" placeholder="name@example.com"
+        <input hidden readonly type="text" class="form-control" id="kodeunit" name="kodeunit" placeholder="name@example.com"
             value="{{ $kunjungan[0]->kode_unit }}">
     </div>
 

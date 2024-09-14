@@ -45,3 +45,63 @@
     </tr>
 </table>
 @endforeach
+<div class="card">
+    <div class="card-header">Order Faramsi</div>
+    <div class="card-body">
+        <table id="tabelriwayatobat" class="table table-sm table-bordered text-xs table-hover">
+            <thead>
+                <th>Tanggal order</th>
+                <th>Nama Obat</th>
+                <th>Dosis</th>
+                <th>Aturan Pakai</th>
+                <th>Sediaan</th>
+                <th>QTY</th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+                @foreach ($dataobat as $d )
+                    <tr>
+                        <td>{{ $d->tgl_entry}}</td>
+                        <td>{{ $d->nama_barang}}</td>
+                        <td>{{ $d->dosis}}</td>
+                        <td>{{ $d->aturan_pakai}}</td>
+                        <td>{{ $d->sediaan}}</td>
+                        <td>{{ $d->qty}}</td>
+                        <td>@if($d->status == 1)Terkirim
+                            @elseif($d->status == 2) Selesai
+                            @elseif($d->status == 3) Batal
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Layanan Faramsi</div>
+    <div class="card-body">
+        <table id="tabelriwayatobat" class="table table-sm table-bordered text-xs table-hover">
+            <thead>
+                <th>Tanggal Entry</th>
+                <th>Nama Obat</th>
+                {{-- <th>Dosis</th> --}}
+                <th>Aturan Pakai</th>
+                <th>Sediaan</th>
+                <th>QTY</th>
+            </thead>
+            <tbody>
+                @foreach ($datalayananobat as $d )
+                    <tr>
+                        <td>{{ $d->tgl_entry}}</td>
+                        <td>{{ $d->keterangan01}}</td>
+                        {{-- <td>{{ $d->dosis}}</td> --}}
+                        <td>{{ $d->aturan_pakai}}</td>
+                        <td>{{ $d->satuan_barang}}</td>
+                        <td>{{ $d->jumlah_layanan}}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
