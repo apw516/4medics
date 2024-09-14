@@ -89,7 +89,7 @@ Route::post('/ambil_detail_layanan', [FarmasiController::class, 'ambilDetailLaya
 Route::post('/cari_obat_farmasi', [FarmasiController::class, 'cariObatFarmasi'])->name('cari_obat_farmasi');
 Route::post('/hitungorderanfarmasi', [FarmasiController::class, 'hitungOrderanFarmasi'])->name('hitungorderanfarmasi');
 Route::post('/simpanorderan', [FarmasiController::class, 'simpanLayananResep'])->name('simpanorderan');
-Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananr
+Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananresep');
 
 
 //data master
