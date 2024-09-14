@@ -207,7 +207,7 @@ class FarmasiController extends Controller
             ];
             $gt_header = $gt_header + $gt;
             layanan_detail::create($data_detail);
-            farmasidetailorder::whereRaw('id = ?', $ob['iddetail'])->update(['status' => '2']);
+            farmasidetailorder::whereRaw('id = ?', $ob['iddetail'])->update(['status' => '2','id_layanan_detail' => $id_detail]);
             $get_stok_last = DB::select('select * from ti_kartu_stok where kode_barang = ? and no = (select max(no) from ti_kartu_stok where kode_barang =?)', [$ob['idobat'], $ob['idobat']]);
             $data_ti_kartu_stok = [
                 'no_dokumen' => $kode_layanan_header,
@@ -541,6 +541,7 @@ class FarmasiController extends Controller
             'stok' => $last_sediaan[0]->stok + $detail[0]->jumlah_layanan
         ];
         farmasi_stok_persediaan::where('id', $last_sediaan[0]->id)->update($sdiaan);
+        farmasidetailorder::whereRaw('id_layanan_detail = ?', $kodedetail)->update(['status' => '1']);
         $data = [
             'kode' => 200,
             'message' => 'sukses'
