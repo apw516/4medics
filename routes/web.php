@@ -38,7 +38,7 @@ Route::get('/carikecamatan', [RekamedisController::class, 'cariKecamatan'])->mid
 Route::get('/cariunit', [RekamedisController::class, 'cariUnit'])->middleware('auth')->name('cariunit');
 Route::get('/caridokter', [RekamedisController::class, 'cariDokter'])->middleware('auth')->name('caridokter');
 Route::post('/hapuspasien', [RekamedisController::class, 'hapusPasien'])->middleware('auth')->name('hapuspasien');
-=======
+
 Route::get('/pendaftaran', [RekamedisController::class, 'Index'])->name('pendaftaran');
 Route::get('/riwayatpendaftaran', [RekamedisController::class, 'riwayatPendaftaran'])->name('riwayatpendaftaran');
 Route::post('/simpanpasienbaru', [RekamedisController::class, 'simpanPasienBaru'])->name('simpanpasienbaru');
