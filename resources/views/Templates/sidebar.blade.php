@@ -74,6 +74,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('riwayatpemberianobat') }}"
+                            class="nav-link @if ($menu == 'riwayatpemberianobat') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Riwayat Pemberian Obat</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('farmasimasterbarang') }}"
                             class="nav-link @if ($menu == 'masterbarang') active @endif">
                             <i class="nav-icon far bi bi-clipboard2-data"></i>
