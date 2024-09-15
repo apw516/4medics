@@ -13,7 +13,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ asset('public/adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
+                <img src="{{ asset('public/img/user.jpg') }}" class="img-circle elevation-2"
                     alt="User Image">
             </div>
             <div class="info">
@@ -37,14 +37,14 @@
                     <li class="nav-item">
                         <a href="{{ route('pendaftaran') }}"
                             class="nav-link @if ($menu == 'pendaftaran') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far bi bi-r-square"></i>
                             <p class="text">Pendaftaran</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('riwayatpendaftaran') }}"
                             class="nav-link @if ($menu == 'riwayatpendaftaran') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far bi bi-journal-bookmark"></i>
                             <p class="text">Riwayat Pendaftaran</p>
                         </a>
                     </li>
@@ -54,7 +54,7 @@
                     <li class="nav-item">
                         <a href="{{ route('datapasienpoliklinik') }}"
                             class="nav-link @if ($menu == 'datapasien_erm') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far  bi bi-activity"></i>
                             <p class="text">Data Pasien</p>
                         </a>
                     </li>
@@ -69,21 +69,21 @@
                     <li class="nav-item">
                         <a href="{{ route('farmasiorderresep') }}"
                             class="nav-link @if ($menu == 'dataorder') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far bi bi-receipt-cutoff"></i>
                             <p class="text">Data Order</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('riwayatpemberianobat') }}"
                             class="nav-link @if ($menu == 'riwayatpemberianobat') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far bi bi-capsule"></i>
                             <p class="text">Riwayat Pemberian Obat</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('farmasimasterbarang') }}"
                             class="nav-link @if ($menu == 'masterbarang') active @endif">
-                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <i class="nav-icon far  bi bi-prescription2"></i>
                             <p class="text">Master Barang</p>
                         </a>
                     </li>
@@ -93,28 +93,28 @@
                 <li class="nav-item">
                     <a href="{{ route('masterunit') }}"
                         class="nav-link @if ($menu == 'masterunit') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <i class="nav-icon far  bi bi-motherboard"></i>
                         <p class="text">Master Unit</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('masteruser') }}"
                         class="nav-link @if ($menu == 'masteruser') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <i class="nav-icon far bi bi-person-rolodex"></i>
                         <p class="text">Master User</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('masterpegawai') }}"
                         class="nav-link @if ($menu == 'masterpegawai') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <i class="nav-icon far bi bi-people-fill"></i>
                         <p class="text">Master Pegawai</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('masterpasien') }}"
                         class="nav-link @if ($menu == 'masterpasien') active @endif">
-                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <i class="nav-icon far bi bi-person-hearts"></i>
                         <p class="text">Master Pasien</p>
                     </a>
                 </li>
