@@ -82,10 +82,11 @@ Route::post('/ambil_data_pemeriksaan_pasien', [PoliKlinikController::class, 'amb
 Route::post('/cari_obat_erm', [PoliKlinikController::class, 'cari_obat_erm'])->name('cari_obat_erm');
 Route::post('/ambil_riwayat_obat', [PoliKlinikController::class, 'ambil_riwayat_obat'])->name('ambil_riwayat_obat');
 Route::post('/ambil_riwayat_resep', [PoliKlinikController::class, 'ambil_riwayat_resep'])->name('ambil_riwayat_resep');
+Route::post('/ambil_template_resep', [PoliKlinikController::class, 'ambil_template_resep'])->name('ambil_template_resep');
 Route::post('/batalorderresep', [PoliKlinikController::class, 'batalOrderResep'])->name('batalorderresep');
 Route::post('/ambil_detail_resep', [PoliKlinikController::class, 'ambil_detail_resep'])->name('ambil_detail_resep');
+Route::post('/ambil_detail_resep_template', [PoliKlinikController::class, 'ambil_detail_resep_template'])->name('ambil_detail_resep_template');
 // Route::get('/testa', [PoliKlinikController::class, 'testapi'])->name('test');
-
 
 //farmasi
 Route::get('/farmasimasterbarang', [FarmasiController::class, 'farmasimasterbarang'])->name('farmasimasterbarang');
@@ -105,6 +106,7 @@ Route::post('/cari_obat_farmasi', [FarmasiController::class, 'cariObatFarmasi'])
 Route::post('/hitungorderanfarmasi', [FarmasiController::class, 'hitungOrderanFarmasi'])->name('hitungorderanfarmasi');
 Route::post('/simpanorderan', [FarmasiController::class, 'simpanLayananResep'])->name('simpanorderan');
 Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananresep');
+Route::get('/cetakresep/{idheader}', [FarmasiController::class, 'cetakresep']); //formpasien_bpjs
 
 
 //data master

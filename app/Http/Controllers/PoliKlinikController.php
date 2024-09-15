@@ -9,6 +9,8 @@ use App\Models\erm_assesmen_dokter;
 use App\Models\bridging_ris;
 use App\Models\farmasidetailorder;
 use App\Models\farmasiheaderorder;
+use App\Models\template_resep_detail;
+use App\Models\template_resep_header;
 use App\Models\TS_kunjungan;
 
 class PoliKlinikController extends Controller
@@ -117,7 +119,19 @@ class PoliKlinikController extends Controller
                 $array_layanan_obat[] = $dataSet3;
             }
         }
-
+        $simpanresep = 'TIDAK';
+        if($request->simpantemplate == 1){
+            if(strlen($request->namaresep) < 5){
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Nama Resep Wajib diisi ... ! minimal 5 karakter '
+                ];
+                echo json_encode($data);
+                die;
+            }else{
+                $simpanresep = 'YA';
+            }
+        };
         $data_pemeriksaan = [
             'counter' => $dataSet['counter'],
             'kodekunjungan' => $dataSet['kodekunjungan'],
@@ -162,7 +176,29 @@ class PoliKlinikController extends Controller
             ];
             // dd($array_layanan_obat);
             $header_order = farmasiheaderorder::create($data_header);
+            if( $simpanresep == 'YA'){
+                $template_header = [
+                    'nama_resep' => $request->namaresep,
+                    'nama_dokter' => auth()->user()->nama,
+                    'pic' => auth()->user()->id,
+                    'tgl_entry' => $this->get_date(),
+                ];
+                $s_t_h = template_resep_header::create($template_header);
+            }
             foreach ($array_layanan_obat as $ab) {
+                if( $simpanresep == 'YA'){
+                    $data_detail_template = [
+                        'id_header' => $s_t_h->id,
+                        'kode_barang' => $ab['idobat'],
+                        'nama_barang' => $ab['namaobat'],
+                        'dosis' => $ab['dosis'],
+                        'aturan_pakai' => $ab['aturanpakai'],
+                        'sediaan' => $ab['sediaan'],
+                        'qty' => $ab['qty'],
+                        'tgl_entry' => $this->get_now(),
+                    ];
+                template_resep_detail::create($data_detail_template);
+                }
                 $data_detail = [
                     'id_header' => $header_order->id,
                     'kode_barang' => $ab['idobat'],
@@ -244,6 +280,16 @@ class PoliKlinikController extends Controller
             'data_resep2'
         ]));
     }
+    public function ambil_template_resep(request $request)
+    {
+        $id = auth()->user()->id;
+        $data_resep = db::select('select * from farmasi_template_resep_header where pic = ? order by id desc', [$id]);
+        $data_resep2 = db::select('select * from farmasi_template_resep_header a inner join farmasi_template_resep_detail b on a.id = b.id_header where a.pic = ?', [$id]);
+        return view('Poliklinik.template_resep_dokter', compact([
+            'data_resep',
+            'data_resep2'
+        ]));
+    }
     public function testapi()
     {
         $v = new bridging_ris();
@@ -254,6 +300,16 @@ class PoliKlinikController extends Controller
     {
         $idresep = $request->id;
         $data_resep2 = db::select('select * from farmasi_header_order a inner join farmasi_detail_order b on a.id = b.id_header where a.id = ?', [$idresep]);
+        $str = "";
+        foreach($data_resep2 as $d){
+            $str .= "<div class='form-row text-xs'><div class='form-group col-md-3'><label for=''>Nama Obat</label><input readonly type='' class='form-control form-control-sm text-xs edit_field' id='' name='namaobat' value='$d->nama_barang'><input hidden readonly type='' class='form-control form-control-sm' id='' name='idobat' value='$d->kode_barang'></div><div class='form-group col-md-1'><label for='inputPassword4'>Sediaan</label><input readonly type='' class='form-control form-control-sm' id='' name='sediaan' value='$d->sediaan'></div><div class='form-group col-md-1'><label for='inputPassword4'>Dosis</label><input readonly type='' class='form-control form-control-sm' id='' name='dosis' value='$d->dosis'></div><div class='form-group col-md-3'><label for='inputPassword4'>Aturan Pakai</label><textarea type='' class='form-control form-control-sm' id='' name='aturanpakai' rows='4'>$d->aturan_pakai</textarea></div><div class='form-group col-md-1'><label for='inputPassword4'>Qty</label><input type='' class='form-control form-control-sm' id='' name='qty' value='$d->qty'></div><i class='bi bi-x-square remove_field form-group col-md-1 text-danger' kode2=''></i></div>";
+        }
+        return $str;
+    }
+    public function ambil_detail_resep_template(Request $request)
+    {
+        $idresep = $request->id;
+        $data_resep2 = db::select('select * from farmasi_template_resep_header a inner join farmasi_template_resep_detail b on a.id = b.id_header where a.id = ?', [$idresep]);
         $str = "";
         foreach($data_resep2 as $d){
             $str .= "<div class='form-row text-xs'><div class='form-group col-md-3'><label for=''>Nama Obat</label><input readonly type='' class='form-control form-control-sm text-xs edit_field' id='' name='namaobat' value='$d->nama_barang'><input hidden readonly type='' class='form-control form-control-sm' id='' name='idobat' value='$d->kode_barang'></div><div class='form-group col-md-1'><label for='inputPassword4'>Sediaan</label><input readonly type='' class='form-control form-control-sm' id='' name='sediaan' value='$d->sediaan'></div><div class='form-group col-md-1'><label for='inputPassword4'>Dosis</label><input readonly type='' class='form-control form-control-sm' id='' name='dosis' value='$d->dosis'></div><div class='form-group col-md-3'><label for='inputPassword4'>Aturan Pakai</label><textarea type='' class='form-control form-control-sm' id='' name='aturanpakai' rows='4'>$d->aturan_pakai</textarea></div><div class='form-group col-md-1'><label for='inputPassword4'>Qty</label><input type='' class='form-control form-control-sm' id='' name='qty' value='$d->qty'></div><i class='bi bi-x-square remove_field form-group col-md-1 text-danger' kode2=''></i></div>";

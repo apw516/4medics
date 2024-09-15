@@ -542,10 +542,24 @@ class FarmasiController extends Controller
         ];
         farmasi_stok_persediaan::where('id', $last_sediaan[0]->id)->update($sdiaan);
         farmasidetailorder::whereRaw('id_layanan_detail = ?', $kodedetail)->update(['status' => '1']);
+        $cek_order_detail = DB::select('select * from farmasi_detail_order where id_layanan_detail = ?',[$kodedetail]);
+        $id_header_order = $cek_order_detail[0]->id_header;
+        $cek_header_order = DB::select('select * from farmasi_header_order a left outer join farmasi_detail_order b on a.id = b.id_header where a.id = ? and b.status = 1',[$id_header_order]);
+        // dd($cek_header_order);
+        if(count($cek_header_order) > 0){
+            farmasiheaderorder::whereRaw('id = ?',$id_header_order)->update(['status' => '1']);
+        }
         $data = [
             'kode' => 200,
             'message' => 'sukses'
         ];
         echo json_encode($data);
+    }
+    public function cetakresep($id)
+    {
+        $dataresep = DB::select('select * from ts_layanan_detail where row_id_header = ?',[$id]);
+        return view('Farmasi.cetakanresep',compact([
+            'dataresep'
+        ]));
     }
 }

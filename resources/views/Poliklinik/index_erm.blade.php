@@ -244,7 +244,6 @@
                                                             <div class="v_tabel_stok_obat">
 
                                                             </div>
-
                                                         </div>
                                                         <div class="col-md-7">
                                                             <div class="card">
@@ -258,6 +257,16 @@
                                                                             </div>
                                                                         </div>
                                                                     </form>
+                                                                    <div class="form-group form-check">
+                                                                        <input type="checkbox" class="form-check-input" id="simpantemplate" name="simpantemplate" value="1">
+                                                                        <label class="form-check-label" for="exampleCheck1">simpan Resep sebagai template</label>
+                                                                      </div>
+                                                                      <div class="form-group">
+                                                                        <label for="exampleInputEmail1">Nama Resep</label>
+                                                                        <input type="text" class="form-control form-control-sm" placeholder="Masukan nama resep ..." aria-describedby="emailHelp" name="namaresep" id="namaresep">
+                                                                        <small id="emailHelp" class="form-text text-muted">Wajib diisi jika resep akan disimpan sebagai template ...</small>
+                                                                      </div>
+
                                                                 </div>
                                                                 <div class="card-footer">
                                                                     <button class="btn btn-info" data-toggle="modal"
@@ -268,6 +277,10 @@
                                                                         data-target="#modalriwayatresep" onclick="tampilriwayatresep()"><i
                                                                             class="bi bi-list-check mr-1 ml-1"></i>
                                                                         Riwayat Resep Pasien</button>
+                                                                    <button class="btn btn-info" data-toggle="modal"
+                                                                        data-target="#modaltemplateresepdokter" onclick="tampiltemplateresep()"><i
+                                                                            class="bi bi-list-check mr-1 ml-1"></i>
+                                                                        Template Resep Dokter</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -344,6 +357,28 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="modaltemplateresepdokter" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Template Resep Dokter ...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="v_r_t_resep">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <input hidden type="text" value="{{ $rm }}" id="no_rm">
 <script>
@@ -362,6 +397,8 @@
         spinner.show();
         var data = $('.formpemeriksaan').serializeArray();
         var data2 = $('.form_layanan').serializeArray();
+        simpantemplate = $('#simpantemplate:checked').val()
+        namaresep = $('#namaresep').val()
         $.ajax({
             async: true,
             type: 'post',
@@ -370,6 +407,8 @@
                 _token: "{{ csrf_token() }}",
                 data: JSON.stringify(data),
                 data2: JSON.stringify(data2),
+                simpantemplate,
+                namaresep
             },
             url: '<?= route('simpanpemeriksaan') ?>',
             error: function(data) {
@@ -484,6 +523,25 @@
             success: function(response) {
                 spinner.hide()
                 $('.v_r_resep').html(response);
+            }
+        });
+    }
+    function tampiltemplateresep() {
+        spinner = $('#loader')
+        spinner.show();
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+            url: '<?= route('ambil_template_resep') ?>',
+            error: function(response) {
+                spinner.hide()
+                alert('error')
+            },
+            success: function(response) {
+                spinner.hide()
+                $('.v_r_t_resep').html(response);
             }
         });
     }
