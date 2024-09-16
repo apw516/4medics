@@ -6,6 +6,7 @@ use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
+use App\Http\Controllers\satuSehatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -18,6 +19,7 @@ Route::get('/infoakun', [AuthController::class, 'Infoakun'])->middleware('auth')
 
 
 Route::get('/dashboard', [DashboardController::class, 'Index'])->middleware('auth')->name('dashboard');
+Route::get('/dashboard2', [DashboardController::class, 'Index_test_satu_Sehat_master_wilayah'])->middleware('auth')->name('dashboard2');
 
 
 Route::get('/pendaftaran', [RekamedisController::class, 'Index'])->middleware('auth')->name('pendaftaran');
@@ -130,3 +132,9 @@ Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegaw
 Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->middleware('auth')->name('simpanupdate');
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->middleware('auth')->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->middleware('auth')->name('simpanupdatepegawai');
+
+
+//satusehat
+Route::get('/partner4medics', [SatuSehatController::class, 'indexPartner4medics'])->middleware('auth')->name('partner4medics');
+Route::post('/ambildatapartner', [SatuSehatController::class, 'ambildatapartner'])->middleware('auth')->name('ambildatapartner');
+Route::post('/ambil_loaction_by_orgId', [SatuSehatController::class, 'ambil_loaction_by_orgId'])->middleware('auth')->name('ambil_loaction_by_orgId');

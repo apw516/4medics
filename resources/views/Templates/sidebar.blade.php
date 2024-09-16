@@ -119,6 +119,14 @@
                     </a>
                 </li>
                 @endif
+                <li hidden class="nav-header">DATA SATU SEHAT</li>
+                <li hidden class="nav-item">
+                    <a href="{{ route('partner4medics') }}"
+                        class="nav-link @if ($menu == 'partner4medics') active @endif">
+                        <i class="nav-icon far bi bi-person-hearts"></i>
+                        <p class="text">Get Partner 4medics</p>
+                    </a>
+                </li>
                 <li class="nav-header">Akun</li>
                 <li class="nav-item">
                     <a href="{{ route('infoakun') }}" class="nav-link @if ($menu == 'infoakun') active @endif">
