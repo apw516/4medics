@@ -7,6 +7,7 @@ use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
 use App\Http\Controllers\satuSehatController;
+use App\Http\Controllers\SatuSehatController as ControllersSatuSehatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -135,6 +136,15 @@ Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegaw
 
 
 //satusehat
-Route::get('/partner4medics', [SatuSehatController::class, 'indexPartner4medics'])->middleware('auth')->name('partner4medics');
+Route::get('/indexorganisasilokasi', [SatuSehatController::class, 'indexorganisasilokasi'])->middleware('auth')->name('indexorganisasilokasi');
+Route::post('/ambil_form_add_ukp', [SatuSehatController::class, 'ambil_form_add_ukp'])->middleware('auth')->name('ambil_form_add_ukp');
+Route::post('/ambil_form_add_koord_poli', [SatuSehatController::class, 'ambil_form_add_koord_poli'])->middleware('auth')->name('ambil_form_add_koord_poli');
 Route::post('/ambildatapartner', [SatuSehatController::class, 'ambildatapartner'])->middleware('auth')->name('ambildatapartner');
 Route::post('/ambil_loaction_by_orgId', [SatuSehatController::class, 'ambil_loaction_by_orgId'])->middleware('auth')->name('ambil_loaction_by_orgId');
+Route::get('/cariprovinsi_satusehat', [satuSehatController::class, 'cariProvinsi'])->middleware('auth')->name('cariprovinsi_satusehat');
+Route::get('/carikabupaten_satusehat', [satuSehatController::class, 'cariKabupaten'])->middleware('auth')->name('carikabupaten_satusehat');
+Route::get('/carikecamatan_satusehat', [satuSehatController::class, 'cariKecamatan'])->middleware('auth')->name('carikecamatan_satusehat');
+Route::get('/caridesa_satusehat', [satuSehatController::class, 'cariDesa'])->middleware('auth')->name('caridesa_satusehat');
+Route::get('/carisuborg_satusehat', [satuSehatController::class, 'carisuborg_satusehat'])->middleware('auth')->name('carisuborg_satusehat');
+Route::post('/simpanukpbaru', [satuSehatController::class, 'simpanukpbaru'])->middleware('auth')->name('simpanukpbaru');
+Route::post('/simpankoordbaru', [satuSehatController::class, 'simpankoordbaru'])->middleware('auth')->name('simpankoordbaru');

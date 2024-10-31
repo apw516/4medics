@@ -119,12 +119,12 @@
                     </a>
                 </li>
                 @endif
-                <li hidden class="nav-header">DATA SATU SEHAT</li>
-                <li hidden class="nav-item">
-                    <a href="{{ route('partner4medics') }}"
-                        class="nav-link @if ($menu == 'partner4medics') active @endif">
+                <li class="nav-header">INTEGRASI SATU SEHAT</li>
+                <li class="nav-item">
+                    <a href="{{ route('indexorganisasilokasi') }}"
+                        class="nav-link @if ($menu == 'organisasidanlokasi') active @endif">
                         <i class="nav-icon far bi bi-person-hearts"></i>
-                        <p class="text">Get Partner 4medics</p>
+                        <p class="text">Organisasi & Lokasi</p>
                     </a>
                 </li>
                 <li class="nav-header">Akun</li>

@@ -15,7 +15,7 @@ class Satusehat_model extends Model
     public $urlpelayanan = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/';
     public $urlauthmaster = 'https://api-satusehat.kemkes.go.id/oauth2/v1/';
     public $urlmaster = 'https://api-satusehat-stg.dto.kemkes.go.id/masterdata/v1/';
-
+    public $idorg = 'b162afd3-892d-4e8f-a018-d941317e52b0';
     public $client_id = 'bgVWzHZKRvTPpJZWGlxHEQX1K7g0aoPGQmxmWsegn889dTjF';
     public $client_secret = 'enO5BG6zTdcSOnlT68Cx1FMSjoSeGiJZrcOkh2Iqb6ylHZjbeUvFJFY1JmzWgJQT';
     public static function header()
@@ -286,8 +286,179 @@ class Satusehat_model extends Model
             return $response;
         }
     }
-    public function create_kunjungan_baru_pasien_rajal(){
-
+    public function  CreateOrganizationUKP($data)
+    {
+        $arrayVar = [
+            "resourceType" => "Organization",
+            "active" => true,
+            "identifier" => [
+                [
+                    "use" => "official",
+                    "system" => "http://sys-ids.kemkes.go.id/organization/$this->idorg",
+                    "value" => "SS-UKP",
+                ],
+            ],
+            "type" => [
+                [
+                    "coding" => [
+                        [
+                            "system" =>
+                            "http://terminology.hl7.org/CodeSystem/organization-type",
+                            "code" => "team",
+                            "display" => "Organizational team",
+                        ],
+                    ],
+                ],
+            ],
+            "name" => "$data[namaukp]",
+            "telecom" => [
+                ["system" => "phone", "value" => "$data[nomortelepon]", "use" => "work"],
+                [
+                    "system" => "email",
+                    "value" => "$data[email]",
+                    "use" => "work",
+                ],
+                ["system" => "url", "value" => "dto.kemkes.go.id", "use" => "work"],
+            ],
+            "address" => [
+                [
+                    "use" => "work",
+                    "type" => "both",
+                    "line" => [
+                        "$data[alamat]",
+                    ],
+                    "city" => "Jakarta",
+                    "postalCode" => "12950",
+                    "country" => "ID",
+                    "extension" => [
+                        [
+                            "url" =>
+                            "https://fhir.kemkes.go.id/r4/StructureDefinition/administrativeCode",
+                            "extension" => [
+                                ["url" => "province", "valueCode" => "$data[kodeprovinsi]"],
+                                ["url" => "city", "valueCode" => "$data[kodekabupaten]"],
+                                ["url" => "district", "valueCode" => "$data[kodekecamatan]"],
+                                ["url" => "village", "valueCode" => "$data[kodedesa]"],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            "partOf" => [
+                "reference" => "Organization/$this->idorg",
+                "display" => "$data[namadisplay]",
+            ],
+        ];
+        // dd($arrayVar);
+        $client = new Client();
+        $url = $this->urlpelayanan . 'Organization';
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => $this->generate_token_satu_sehat(),
+                'json' => $arrayVar
+            ]);
+            $response = json_decode($response->getBody());
+            $response = [
+                'code' => 200,
+                'data' => $response,
+                'id' => $response->id,
+            ];
+            return $response;
+        } catch (ClientException $e) {
+            // $response = $e;
+            $response = [
+                'code' => $e->getCode(),
+                'status' => $e->getMessage(),
+            ];
+            return $response;
+        }
+    }
+    public function  CreateOrganizationKoord($data)
+    {
+        $arrayVar = [
+            "resourceType" => "Organization",
+            "active" => true,
+            "identifier" => [
+                [
+                    "use" => "official",
+                    "system" => "http://sys-ids.kemkes.go.id/organization/$this->idorg",
+                    "value" => "SS-UKP",
+                ],
+            ],
+            "type" => [
+                [
+                    "coding" => [
+                        [
+                            "system" =>
+                            "http://terminology.hl7.org/CodeSystem/organization-type",
+                            "code" => "team",
+                            "display" => "Organizational team",
+                        ],
+                    ],
+                ],
+            ],
+            "name" => "$data[namaukp]",
+            "telecom" => [
+                ["system" => "phone", "value" => "$data[nomortelepon]", "use" => "work"],
+                [
+                    "system" => "email",
+                    "value" => "$data[email]",
+                    "use" => "work",
+                ],
+                ["system" => "url", "value" => "dto.kemkes.go.id", "use" => "work"],
+            ],
+            "address" => [
+                [
+                    "use" => "work",
+                    "type" => "both",
+                    "line" => [
+                        "$data[alamat]",
+                    ],
+                    "city" => "Jakarta",
+                    "postalCode" => "12950",
+                    "country" => "ID",
+                    "extension" => [
+                        [
+                            "url" =>
+                            "https://fhir.kemkes.go.id/r4/StructureDefinition/administrativeCode",
+                            "extension" => [
+                                ["url" => "province", "valueCode" => "$data[kodeprovinsi]"],
+                                ["url" => "city", "valueCode" => "$data[kodekabupaten]"],
+                                ["url" => "district", "valueCode" => "$data[kodekecamatan]"],
+                                ["url" => "village", "valueCode" => "$data[kodedesa]"],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            "partOf" => [
+                "reference" => "Organization/$data[kodesuborg]",
+                "display" => "$data[cariorganization]",
+            ],
+        ];
+        // dd($arrayVar);
+        $client = new Client();
+        $url = $this->urlpelayanan . 'Organization';
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => $this->generate_token_satu_sehat(),
+                'json' => $arrayVar
+            ]);
+            $response = json_decode($response->getBody());
+            $response = [
+                'code' => 200,
+                'data' => $response,
+                'id' => $response->id,
+            ];
+            return $response;
+        } catch (ClientException $e) {
+            // $response = $e;
+            $response = [
+                'code' => $e->getCode(),
+                'status' => $e->getMessage(),
+            ];
+            return $response;
+        }
     }
     public function organizationByPartOf()
     {
@@ -315,7 +486,7 @@ class Satusehat_model extends Model
     public function organizationByPartOf2($id)
     {
         $client = new Client();
-        $url = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/Organization?partof='.$id;
+        $url = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/Organization?partof=' . $id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => $this->generate_token_satu_sehat(),
@@ -338,7 +509,7 @@ class Satusehat_model extends Model
     public function locationByOrgID($ID)
     {
         $client = new Client();
-        $url = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/Location?organization='.$ID;
+        $url = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/Location?organization=' . $ID;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => $this->generate_token_satu_sehat(),

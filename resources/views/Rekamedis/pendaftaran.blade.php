@@ -208,7 +208,6 @@
     </section>
     <script>
         $(".preloader2").fadeOut();
-
         function ambilformpasienbaru() {
             $('.v_pencarianpasien').attr('hidden', true)
             $('.v_form_pasien_baru').removeAttr('hidden', true)
