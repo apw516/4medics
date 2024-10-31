@@ -291,7 +291,7 @@ class RekamedisController extends Controller
         $id = $request->id;
         $nama = $request->nama;
         $alamat = $request->alamat;
-        $mt_pasien = DB::connection('mysql2')->select("CALL WSP_PANGGIL_DATAPASIEN('$rm','$nama','$alamat','$id','')");
+        $mt_pasien = DB::connection('mysql')->select("CALL WSP_PANGGIL_DATAPASIEN('$rm','$nama','$alamat','$id','')");
         return view('Rekamedis.tabel_pasien', compact([
             'mt_pasien'
         ]));
