@@ -6,6 +6,7 @@ use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
+use App\Http\Controllers\SatusehatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -110,3 +111,11 @@ Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegaw
 Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');
+
+//satu sehat
+Route::get('/masterorganization', [SatusehatController::class, 'indexMasterOrganization'])->name('masterorganization');
+Route::get('/cariprovinsi', [SatusehatController::class, 'Cariprovinsi'])->name('cariprovinsi');
+Route::get('/carikabupaten', [SatusehatController::class, 'Carikabupaten'])->name('carikabupaten');
+Route::get('/carikecamatan', [SatusehatController::class, 'Carikecamatan'])->name('carikecamatan');
+Route::get('/caridesa', [SatusehatController::class, 'Caridesa'])->name('caridesa');
+Route::post('/simpandataukp', [SatusehatController::class, 'Simpandataukp'])->name('simpandataukp');
