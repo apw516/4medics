@@ -50,6 +50,11 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="card-footer">
+            @if(count($data2) > 0)
+            <button class="btn btn-info cetakresep" idheader="{{ $d->idheader }}"><i class="bi bi-printer mr-1 ml-1"></i> Cetak Resep</button>
+            @endif
+        </div>
     </div>
 </div>
 <script>
@@ -85,11 +90,28 @@
                         if(data.kode == 200){
                             Swal.fire(data.message, "", "success");
                             $('#modalinfo').modal('toggle');
+                            location.reload()
                         }else{
                             Swal.fire(data.message, "", "error");
                         }
                     }
                 });
+            }
+        });
+    });
+      $(".cetakresep").on('click', function(event) {
+        Swal.fire({
+            title: "Resep akan dicetak ?",
+            text: "Klik OK untuk melanjutkan ...",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "OK"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                idheader = $(this).attr('idheader')
+                window.open('cetakresep/'+idheader);
             }
         });
     });

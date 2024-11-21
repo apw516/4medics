@@ -34,6 +34,15 @@ class FarmasiController extends Controller
             'date'
         ]));
     }
+    public function riwayatpemberianobat()
+    {
+        $menu = 'riwayatpemberianobat';
+        $date = $this->get_date();
+        return view('Farmasi.indexriwayatpemberianresep', compact([
+            'menu',
+            'date'
+        ]));
+    }
     public function ambilformmasterbarang()
     {
         $satuan = db::select('select * from mt_satuan');
@@ -76,6 +85,18 @@ class FarmasiController extends Controller
             'data'
         ]));
     }
+    public function cari_riwayat_pemberian_obat(Request $request)
+    {
+        $awal = $request->awal;
+        $akhir = $request->akhir;
+        $data  = db::select('select *,a.id as idlayananheader,a.tgl_entry as tgl_resep ,fc_nama_unit1(b.kode_unit) as unit_asal,fc_alamat(b.no_rm) as alamat_pasien,fc_NAMA_PARAMEDIS1(b.kode_paramedis) as nama_dokter_poli from ts_layanan_header a
+        inner join ts_kunjungan b on a.kode_kunjungan = b.kode_kunjungan
+        inner join mt_pasien c on b.no_rm = c.no_rm
+        where date(a.tgl_entry) between ? and ? and a.status_layanan != ? and a.kode_unit = ?', [$awal, $akhir, 3,4008]);
+        return view('Farmasi.tabel_riwayat_pemberian_obat', compact([
+            'data'
+        ]));
+    }
     public function cariObatFarmasi(Request $request)
     {
         $nama = $request->namaobat;
@@ -97,6 +118,14 @@ class FarmasiController extends Controller
             'data',
             'idheader',
             'data2'
+        ]));
+    }
+    public function detail_riwayat_resep(Request $request)
+    {
+        $idheader = $request->id;
+        $detail = db::select('select * from ts_layanan_detail where row_id_header = ?',[$idheader]);
+        return view('Farmasi.detail_riwayat_resep',compact([
+            'detail'
         ]));
     }
     public function ambilDetailLayanan(Request $request)
@@ -207,7 +236,7 @@ class FarmasiController extends Controller
             ];
             $gt_header = $gt_header + $gt;
             layanan_detail::create($data_detail);
-            farmasidetailorder::whereRaw('id = ?', $ob['iddetail'])->update(['status' => '2']);
+            farmasidetailorder::whereRaw('id = ?', $ob['iddetail'])->update(['status' => '2','id_layanan_detail' => $id_detail]);
             $get_stok_last = DB::select('select * from ti_kartu_stok where kode_barang = ? and no = (select max(no) from ti_kartu_stok where kode_barang =?)', [$ob['idobat'], $ob['idobat']]);
             $data_ti_kartu_stok = [
                 'no_dokumen' => $kode_layanan_header,
@@ -541,10 +570,25 @@ class FarmasiController extends Controller
             'stok' => $last_sediaan[0]->stok + $detail[0]->jumlah_layanan
         ];
         farmasi_stok_persediaan::where('id', $last_sediaan[0]->id)->update($sdiaan);
+        farmasidetailorder::whereRaw('id_layanan_detail = ?', $kodedetail)->update(['status' => '1']);
+        $cek_order_detail = DB::select('select * from farmasi_detail_order where id_layanan_detail = ?',[$kodedetail]);
+        $id_header_order = $cek_order_detail[0]->id_header;
+        $cek_header_order = DB::select('select * from farmasi_header_order a left outer join farmasi_detail_order b on a.id = b.id_header where a.id = ? and b.status = 1',[$id_header_order]);
+        // dd($cek_header_order);
+        if(count($cek_header_order) > 0){
+            farmasiheaderorder::whereRaw('id = ?',$id_header_order)->update(['status' => '1']);
+        }
         $data = [
             'kode' => 200,
             'message' => 'sukses'
         ];
         echo json_encode($data);
+    }
+    public function cetakresep($id)
+    {
+        $dataresep = DB::select('select * from ts_layanan_detail where row_id_header = ?',[$id]);
+        return view('Farmasi.cetakanresep',compact([
+            'dataresep'
+        ]));
     }
 }
