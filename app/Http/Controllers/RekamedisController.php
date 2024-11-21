@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ihs_mt_pasien;
 use App\Models\Log_mt_pasien;
 use App\Models\Mt_pasien;
 use App\Models\TS_kunjungan;
@@ -54,8 +55,12 @@ class RekamedisController extends Controller
             'alamat' => $dataSet['alamat'],
             'pic' => auth()->user()->id
         ];
+        $ihs_mt_pasien = [
+
+        ];
         // dd($data_mt_pasien);
         Mt_pasien::create($data_mt_pasien);
+        ihs_mt_pasien::create($ihs_mt_pasien);
         $data = [
             'kode' => 200,
             'message' => 'sukses',
