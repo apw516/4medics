@@ -60,9 +60,44 @@ class RekamedisController extends Controller
         }else{
             $jk = 'female';
         }
+
+        $datasatusehat = [
+            'nik' =>$dataSet['nomoridentitas'],
+            'passpor'=>'-',
+            'kk'=>'-',
+            'namapasien'=>$dataSet['namapasien'],
+            'notelp'=>'-',
+            'normh'=>'-',
+            'email'=>'-',
+            'jeniskelamin'=>$jk,
+            'tgllahir'=>$dataSet['tgllahir'],
+            'alamat'=>$dataSet['alamat'],
+            'kota'=> $dataSet['tempatlahir'],
+            'kodepos'=>'-',
+            'prov'=>$dataSet['idprovinsi'],
+            'kab'=>$dataSet['idkabupaten'],
+            'kec'=>$dataSet['idkecamatan'],
+            'des'=>$dataSet['iddesa'],
+            'rt'=>'-',
+            'rw '=>'-',
+            'statuskawin'=>'M',
+            'namakeluarga '=>'-',
+            'hubungan '=>'-',
+            'namakeluarga '=>'-',
+            'telpkeluarga '=>'-',
+        ];
         $ihs_mt_pasien = [
 
         ];
+        $p = $v->createPatientByNIK($datasatusehat);
+        $id_satu_sehat = 0;
+        $status_satu_sehat = 0;
+        if ($p['code'] == 200) {
+            // DD($p);
+            $id_satu_sehat = $p['data'];
+            $status_satu_sehat = 1;
+        }
+
         // dd($data_mt_pasien);
         Mt_pasien::create($data_mt_pasien);
         ihs_mt_pasien::create($ihs_mt_pasien);
