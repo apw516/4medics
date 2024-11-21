@@ -8,6 +8,8 @@ use App\Models\TS_kunjungan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Satusehat_model;
+use Exception;
 
 class RekamedisController extends Controller
 {
@@ -36,6 +38,45 @@ class RekamedisController extends Controller
             $dataSet[$index] = $value;
         }
         $rm = $this->get_rm();
+        $v = new Satusehat_model();
+        if($dataSet['jeniskelamin'] == 'L'){
+            $jk = 'male';
+        }else{
+            $jk = 'female';
+        }
+        $datasatusehat = [
+            'nik' =>$dataSet['nomoridentitas'],
+            'passpor'=>'-',
+            'kk'=>'-',
+            'namapasien'=>$dataSet['namapasien'],
+            'notelp'=>'-',
+            'normh'=>'-',
+            'email'=>'-',
+            'jeniskelamin'=>$jk,
+            'tgllahir'=>$dataSet['tgllahir'],
+            'alamat'=>$dataSet['alamat'],
+            'kota'=> $dataSet['tempatlahir'],
+            'kodepos'=>'-',
+            'prov'=>$dataSet['idprovinsi'],
+            'kab'=>$dataSet['idkabupaten'],
+            'kec'=>$dataSet['idkecamatan'],
+            'des'=>$dataSet['iddesa'],
+            'rt'=>'-',
+            'rw '=>'-',
+            'statuskawin'=>'M',
+            'namakeluarga '=>'-',
+            'hubungan '=>'-',
+            'namakeluarga '=>'-',
+            'telpkeluarga '=>'-',
+        ];
+        $p = $v->createPatientByNIK($datasatusehat);
+        $id_satu_sehat = 0;
+        $status_satu_sehat = 0;
+        if ($p['code'] == 200) {
+            // DD($p);
+            $id_satu_sehat = $p['data'];
+            $status_satu_sehat = 1;
+        }
         $data_mt_pasien = [
             'no_rm' => $rm,
             'nik_bpjs' => $dataSet['nomoridentitas'],
@@ -52,10 +93,12 @@ class RekamedisController extends Controller
             'kode_kecamatan' => $dataSet['idkecamatan'],
             'kode_desa' => $dataSet['iddesa'],
             'alamat' => $dataSet['alamat'],
+            'id_satu_sehat' => $id_satu_sehat,
+            'status_satu_sehat' => $status_satu_sehat,
             'pic' => auth()->user()->id
         ];
-        // dd($data_mt_pasien);
         Mt_pasien::create($data_mt_pasien);
+
         $data = [
             'kode' => 200,
             'message' => 'sukses',
@@ -100,6 +143,8 @@ class RekamedisController extends Controller
     }
     public function simpanPendaftaran(Request $request)
     {
+        $date = $this->get_date();
+        $time = $this->get_time();
         $data = json_decode($_POST['data'], true);
         foreach ($data as $nama) {
             $index =  $nama['name'];
@@ -126,7 +171,32 @@ class RekamedisController extends Controller
             echo json_encode($data);
             die;
         }
+        $mtpasien = db::select('select * from mt_pasien where no_rm = ?',[$dataSet['rm']]);
+        $mtunit = db::select('select * from mt_unit where kode_unit = ?',[$dataSet['idunit']]);
+        $kunjungansatusehat = [
+            'namapasien'=>$mtpasien[0]->nama_px,
+            'idsatusehat'=>$mtpasien[0]->id_satu_sehat,
+            'idpoli'=>$mtunit[0]->loc_ihs_kode,
+            'namapoli'=>$mtunit[0]->nama_unit,
+            'iddokter'=>'N10000001',
+            'namadokter'=>'Voigt',
+            'tanggal' => $date,
+            'jam' => $time,
+        ];
+        $id_kunjungan_satu_sehat = 0;
+        $status = 0;
+        if($mtpasien[0]->status_satu_sehat == 1){
+            $v = new Satusehat_model();
+            try{
+                $p = $v->createEncounter($kunjungansatusehat);
+                if($p['code'] == 200){
+                    $id_kunjungan_satu_sehat = $p['data']->id;
+                    $status = 1;
+                }
+            }catch(\Exception $e){
 
+            }
+        }
         $data_kunjungan = [
             'counter' => $counter,
             'no_rm' => $dataSet['rm'],
@@ -134,6 +204,8 @@ class RekamedisController extends Controller
             'tgl_masuk' => $dataSet['tanggalkunjungan'] . ' ' . $this->get_time(),
             'status_kunjungan' => 1,
             'kode_penjamin' => 'P01',
+            'enc_ihs_kode' => $id_kunjungan_satu_sehat,
+            'bridging_satu_sehat' => $status,
             'pic' => auth()->user()->id
         ];
         TS_kunjungan::create($data_kunjungan);
@@ -225,12 +297,22 @@ class RekamedisController extends Controller
         // dd($request);
         $key = $request['desa'];
         $kec = $request['id'];
+        // dd($kec);
         if (strlen($key) > 4) {
-            $result = DB::select("SELECT a.id as id_desa,a.name as nama_desa,b.id as id_kecamatan,b.name as nama_kecamatan,c.id as id_kabupaten,c.name as nama_kabupaten,d.id as id_prov, d.name as nama_prov FROM mt_lokasi_villages a
-         JOIN mt_lokasi_districts b ON a.`district_id` = b.`id`
-         JOIN mt_lokasi_regencies c ON b.regency_id = c.id
-         JOIN mt_lokasi_provinces d on c.province_id = d.id
-        WHERE b.id = '$kec' and a.name LIKE '%$key%'");
+        $result = DB::select("SELECT a.code as id_desa
+        ,a.name as nama_desa
+        ,b.bps_code as id_kecamatan
+        ,b.name as nama_kecamatan
+        ,c.bps_code as id_kabupaten
+        ,c.name as nama_kabupaten
+        ,d.bps_code as id_prov
+        , d.name as nama_prov
+        FROM mt_lokasi_desa_satu_sehat a
+        JOIN mt_lokasi_kecamatan_satu_sehat b ON a.`parent_code` = b.`code`
+        JOIN mt_lokasi_kabupaten_satu_sehat c ON b.parent_code = c.code
+        JOIN mt_lokasi_provinsi_satu_sehat d on c.parent_code = d.bps_code
+        WHERE b.code = '$kec' and a.name LIKE '%$key%'");
+        // dd($result);
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
@@ -244,13 +326,14 @@ class RekamedisController extends Controller
     public function cariProvinsi(Request $request)
     {
         $key = $request['term'];
+        // dd($key);
         if (strlen($key) >= 4) {
-            $result = DB::select("select * from mt_lokasi_provinces where name LIKE '%$key%'");
+            $result = DB::select("select * from mt_lokasi_provinsi_satu_sehat where name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
                         'label' => $row->name,
-                        'kode' => $row->id,
+                        'kode' => $row->bps_code,
                     );
                 echo json_encode($arr_result);
             }
@@ -260,12 +343,12 @@ class RekamedisController extends Controller
     {
         $key = $request['term'];
         if (strlen($key) >= 4) {
-            $result = DB::select("select * from mt_lokasi_regencies where name LIKE '%$key%'");
+            $result = DB::select("select * from mt_lokasi_kabupaten_satu_sehat where name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
                         'label' => $row->name,
-                        'kode' => $row->id,
+                        'kode' => $row->bps_code,
                     );
                 echo json_encode($arr_result);
             }
@@ -275,7 +358,7 @@ class RekamedisController extends Controller
     {
         $key = $request['term'];
         if (strlen($key) >= 4) {
-            $result = DB::select("select *,a.name as nama_kecamatan,b.name as nama_kabupaten,a.id as id_kec from mt_lokasi_districts a inner join mt_lokasi_regencies b on a.regency_id = b.id where a.name LIKE '%$key%'");
+            $result = DB::select("select *,a.name as nama_kecamatan,b.name as nama_kabupaten,a.code as id_kec from mt_lokasi_kecamatan_satu_sehat a inner join mt_lokasi_kabupaten_satu_sehat b on a.parent_code = b.bps_code where a.name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
@@ -315,10 +398,10 @@ class RekamedisController extends Controller
         $kab = $pasien[0]->kode_kabupaten;
         $kec = $pasien[0]->kode_kecamatan;
         $des = $pasien[0]->kode_desa;
-        $provinsi = DB::select('select * from mt_lokasi_provinces where id = ?',[$prov]);
-        $kabupaten = DB::select('select * from mt_lokasi_regencies where id = ?',[$kab]);
-        $kecamatan = DB::select('select * from mt_lokasi_districts where id = ?',[$kec]);
-        $desa = DB::select('select * from mt_lokasi_villages where id = ?',[$des]);
+        $provinsi = DB::select('select * from mt_lokasi_provinsi_satu_sehat where bps_code = ?',[$prov]);
+        $kabupaten = DB::select('select * from mt_lokasi_kabupaten_satu_sehat where bps_code = ?',[$kab]);
+        $kecamatan = DB::select('select * from mt_lokasi_kecamatan_satu_sehat where code = ?',[$kec]);
+        $desa = DB::select('select * from mt_lokasi_desa_satu_sehat where code = ?',[$des]);
         $date = $this->get_date();
         return view('Rekamedis.form_edit_pasien', compact([
             'pasien','provinsi','kabupaten','kecamatan','desa'

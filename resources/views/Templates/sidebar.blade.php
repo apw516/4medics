@@ -112,6 +112,20 @@
                 </li>
                 <li class="nav-header">INTEGRASI SATU SEHAT</li>
                 <li class="nav-item">
+                    <a href="{{ route('masterkunjungan') }}"
+                        class="nav-link @if ($menu == 'masterkunjungan') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Data Kunjungan</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('masterorganization') }}"
+                        class="nav-link @if ($menu == 'masterassesmen') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Assesmen Pemeriksaan</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('masterorganization') }}"
                         class="nav-link @if ($menu == 'masterorganization') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>

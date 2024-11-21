@@ -46,10 +46,10 @@ Route::post('/ambilformeditpasien', [RekamedisController::class, 'ambilFormEditP
 Route::post('/ambil_detail_kunjungan', [RekamedisController::class, 'ambilDetailKunjungan'])->name('ambil_detail_kunjungan');
 Route::post('/cari_riwayat_pendaftaran', [RekamedisController::class, 'ambilRiwayatDaftar'])->name('cari_riwayat_pendaftaran');
 Route::post('/cari_riwayat_pendaftaran_today', [RekamedisController::class, 'ambilRiwayatDaftarToday'])->name('cari_riwayat_pendaftaran_today');
-Route::get('/caridesa', [RekamedisController::class, 'cariDesa'])->name('caridesa');
-Route::get('/cariprovinsi', [RekamedisController::class, 'cariProvinsi'])->name('cariprovinsi');
-Route::get('/carikabupaten', [RekamedisController::class, 'cariKabupaten'])->name('carikabupaten');
-Route::get('/carikecamatan', [RekamedisController::class, 'cariKecamatan'])->name('carikecamatan');
+Route::get('/caridesa2', [RekamedisController::class, 'cariDesa'])->name('caridesa2');
+Route::get('/cariprovinsi2', [RekamedisController::class, 'cariProvinsi'])->name('cariprovinsi2');
+Route::get('/carikabupaten2', [RekamedisController::class, 'cariKabupaten'])->name('carikabupaten2');
+Route::get('/carikecamatan2', [RekamedisController::class, 'cariKecamatan'])->name('carikecamatan2');
 Route::get('/cariunit', [RekamedisController::class, 'cariUnit'])->name('cariunit');
 Route::get('/caridokter', [RekamedisController::class, 'cariDokter'])->name('caridokter');
 Route::post('/hapuspasien', [RekamedisController::class, 'hapusPasien'])->name('hapuspasien');
@@ -111,11 +111,20 @@ Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegaw
 Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');
+Route::post('/kirimasiensatusehat', [MasterController::class, 'kirimPasienSatuSehat'])->name('kirimasiensatusehat');
 
 //satu sehat
+Route::get('/masterkunjungan', [SatusehatController::class, 'indexMasterKunjungan'])->name('masterkunjungan');
 Route::get('/masterorganization', [SatusehatController::class, 'indexMasterOrganization'])->name('masterorganization');
 Route::get('/cariprovinsi', [SatusehatController::class, 'Cariprovinsi'])->name('cariprovinsi');
 Route::get('/carikabupaten', [SatusehatController::class, 'Carikabupaten'])->name('carikabupaten');
 Route::get('/carikecamatan', [SatusehatController::class, 'Carikecamatan'])->name('carikecamatan');
 Route::get('/caridesa', [SatusehatController::class, 'Caridesa'])->name('caridesa');
+Route::post('/ambildataukp', [SatusehatController::class, 'Ambildataukp'])->name('ambildataukp');
+Route::post('/ambildatakunjungan_satusehat', [SatusehatController::class, 'AmbilDataKunjungan'])->name('ambildatakunjungan_satusehat');
+Route::post('/ambildatapoli', [SatusehatController::class, 'Ambildatapoli'])->name('ambildatapoli');
 Route::post('/simpandataukp', [SatusehatController::class, 'Simpandataukp'])->name('simpandataukp');
+Route::post('/simpandatapoli', [SatusehatController::class, 'Simpandatapoli'])->name('simpandatapoli');
+Route::post('/simpandatakoordpoli', [SatusehatController::class, 'Simpandatakoordpoli'])->name('simpandatakoordpoli');
+Route::post('/kirimkunjunganpasien', [SatusehatController::class, 'KirimKunjunganPasien'])->name('kirimkunjunganpasien');
+Route::post('/pulangkanpasien', [SatusehatController::class, 'PulangkanPasien'])->name('pulangkanpasien');

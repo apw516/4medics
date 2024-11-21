@@ -10,6 +10,7 @@ use App\Models\bridging_ris;
 use App\Models\farmasidetailorder;
 use App\Models\farmasiheaderorder;
 use App\Models\TS_kunjungan;
+use App\Models\Satusehat_model;
 
 class PoliKlinikController extends Controller
 {
@@ -76,11 +77,29 @@ class PoliKlinikController extends Controller
     }
     public function ambilDataPasienErm(Request $request)
     {
+        $date = $this->get_date();
+        $time = $this->get_time();
         $kodekunjungan = $request->kode_kunjungan;
         $kunjungan = DB::connection('mysql2')->select('select * from ts_kunjungan where kode_kunjungan = ?', [$kodekunjungan]);
         $mt_pasien = DB::connection('mysql2')->select('select *,fc_alamat(no_rm) as alamat2,date(tgl_lahir) as tgl_lahir2 from mt_pasien where no_rm = ?', [$kunjungan[0]->no_rm]);
+        $mt_unit = db::select('select * from mt_unit where kode_unit  = ?', [$kunjungan[0]->kode_unit]);
         $rm = $mt_pasien[0]->no_rm;
         $cekassesmen = DB::connection('mysql2')->select('select * from erm_assesmen_medis where no_rm = ? and id = (select max(id) as id from erm_assesmen_medis where no_rm = ?)', [$rm, $rm]);
+        $data_satu_sehat = [
+            'registrasi_id' => $kunjungan[0]->enc_ihs_kode,
+            'id_pasien' => $mt_pasien[0]->id_satu_sehat,
+            'namapasien' => $mt_pasien[0]->nama_px,
+            'iddokter' => 'N10000001',
+            'namadokter' => 'Voigt',
+            'id_poli' => $mt_unit[0]->loc_ihs_kode,
+            'nama_poli' => $mt_unit[0]->nama_unit,
+            'tanggal' => $date,
+            'jam' => $time,
+        ];
+        if ($kunjungan[0]->bridging_satu_sehat == 1) {
+            $v = new Satusehat_model();
+            $p = $v->updateEncounter($data_satu_sehat);
+        }
         return view('Poliklinik.index_erm', compact([
             'mt_pasien',
             'kunjungan',
@@ -95,9 +114,10 @@ class PoliKlinikController extends Controller
         $dt2 = DB::connection('mysql2')->select('select * from ts_kunjungan a
         left outer join ts_layanan_header b on a.kode_kunjungan = b.kode_kunjungan
         left outer join ts_layanan_detail c on b.id = c.row_id_header
-        where a.no_rm = ? and b.kode_unit = ?',[$rm,'4008']);
+        where a.no_rm = ? and b.kode_unit = ?', [$rm, '4008']);
         return view('Poliklinik.riwayatpemeriksaan', compact([
-            'assesmen','dt2'
+            'assesmen',
+            'dt2'
         ]));
     }
     public function simpanPemeriksaanDokter(Request $request)
@@ -117,7 +137,25 @@ class PoliKlinikController extends Controller
                 $array_layanan_obat[] = $dataSet3;
             }
         }
-
+        $mt_pasien = db::select('select * from mt_pasien where no_rm = ?', [$dataSet['norm']]);
+        $datakunjungan = db::select('select * from ts_kunjungan where kode_kunjungan = ?', [$dataSet['kodekunjungan']]);
+        $id_kunjungan_satu_sehat = 0;
+        if ($datakunjungan[0]->bridging_satu_sehat == 1) {
+            $datasatusehat = [
+                'idpasien' => $mt_pasien[0]->id_satu_sehat,
+                'namapasien' => $mt_pasien[0]->nama_px,
+                'counterid' => $datakunjungan[0]->enc_ihs_kode,
+                'iddokter' => 'N10000001',
+                'namadokter' => 'Voigt',
+                'keluhan' => $dataSet['subject'],
+            ];
+            $v = new Satusehat_model();
+            $id_kunjungan_satu_sehat = 0;
+            $p = $v->anamnesisKeluhanUtama($datasatusehat);
+            if ($p['code'] == 200) {
+                $id_kunjungan_satu_sehat = $p['data']->id;
+            }
+        }
         $data_pemeriksaan = [
             'counter' => $dataSet['counter'],
             'kodekunjungan' => $dataSet['kodekunjungan'],
@@ -135,6 +173,7 @@ class PoliKlinikController extends Controller
             'kode_paramedis' => auth()->user()->kode_paramedis,
             'pic' => auth()->user()->id,
             'nama_dokter' => auth()->user()->nama,
+            'id_satu_sehat' => $id_kunjungan_satu_sehat
         ];
         $cek = DB::connection('mysql2')->select('select * from erm_assesmen_medis where kodekunjungan = ?', [$dataSet['kodekunjungan']]);
         if (count($cek) > 0) {
@@ -255,7 +294,7 @@ class PoliKlinikController extends Controller
         $idresep = $request->id;
         $data_resep2 = db::select('select * from farmasi_header_order a inner join farmasi_detail_order b on a.id = b.id_header where a.id = ?', [$idresep]);
         $str = "";
-        foreach($data_resep2 as $d){
+        foreach ($data_resep2 as $d) {
             $str .= "<div class='form-row text-xs'><div class='form-group col-md-3'><label for=''>Nama Obat</label><input readonly type='' class='form-control form-control-sm text-xs edit_field' id='' name='namaobat' value='$d->nama_barang'><input hidden readonly type='' class='form-control form-control-sm' id='' name='idobat' value='$d->kode_barang'></div><div class='form-group col-md-1'><label for='inputPassword4'>Sediaan</label><input readonly type='' class='form-control form-control-sm' id='' name='sediaan' value='$d->sediaan'></div><div class='form-group col-md-1'><label for='inputPassword4'>Dosis</label><input readonly type='' class='form-control form-control-sm' id='' name='dosis' value='$d->dosis'></div><div class='form-group col-md-3'><label for='inputPassword4'>Aturan Pakai</label><textarea type='' class='form-control form-control-sm' id='' name='aturanpakai' rows='4'>$d->aturan_pakai</textarea></div><div class='form-group col-md-1'><label for='inputPassword4'>Qty</label><input type='' class='form-control form-control-sm' id='' name='qty' value='$d->qty'></div><i class='bi bi-x-square remove_field form-group col-md-1 text-danger' kode2=''></i></div>";
         }
         return $str;

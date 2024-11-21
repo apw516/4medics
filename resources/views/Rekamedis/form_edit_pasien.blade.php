@@ -58,7 +58,7 @@
                     <input type="text" class="form-control" id="provinsi2" name="provinsi2"
                         placeholder="pilih provinsi ..." value="@foreach ($provinsi as $p ) {{ $p->name }}@endforeach">
                     <input readonly type="text" class="form-control" id="idprovinsi2"
-                        name="idprovinsi2" placeholder="pilih desa ..." value="@foreach ($provinsi as $p ) {{ $p->id }}@endforeach">
+                        name="idprovinsi2" placeholder="pilih desa ..." value="@foreach ($provinsi as $p ) {{ $p->bps_code }}@endforeach">
                 </div>
                 <label for="inputPassword"
                     class="col-sm-1 col-form-label text-right">Kabupaten</label>
@@ -66,7 +66,7 @@
                     <input type="text" class="form-control" id="kabupaten2" name="kabupaten2"
                         placeholder="pilih kabupaten ..." value="@foreach ($kabupaten as $kab ) {{ $kab->name }}@endforeach">
                     <input readonly type="text"  class="form-control" id="idkabupaten2"
-                        name="idkabupaten2" placeholder="pilih desa ..."  value="@foreach ($kabupaten as $kab ) {{ $kab->id }}@endforeach">
+                        name="idkabupaten2" placeholder="pilih desa ..."  value="@foreach ($kabupaten as $kab ) {{ $kab->bps_code }}@endforeach">
                 </div>
             </div>
             <div class="form-group row">
@@ -75,14 +75,14 @@
                     <input type="text" class="form-control" id="kecamatan2" name="kecamatan2"
                         placeholder="pilih kecamatan ..." value="@foreach ($kecamatan as $kec ) {{ $kec->name }}@endforeach">
                     <input readonly type="text"  class="form-control" id="idkecamatan2"
-                        name="idkecamatan2" placeholder="pilih desa ..." value="@foreach ($kecamatan as $kec ) {{ $kec->id }}@endforeach">
+                        name="idkecamatan2" placeholder="pilih desa ..." value="@foreach ($kecamatan as $kec ) {{ $kec->code }}@endforeach">
                 </div>
                 <label for="inputPassword" class="col-sm-1 col-form-label text-right">Desa</label>
                 <div class="col-md-2">
                     <input type="text" class="form-control" id="desa2" name="desa2"
                         placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->name }}@endforeach">
                     <input readonly type="text"  class="form-control" id="iddesa2" name="iddesa2"
-                        placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->id }}@endforeach">
+                        placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->code }}@endforeach">
                 </div>
             </div>
             <div class="form-group row">
@@ -107,21 +107,21 @@
 
     $(document).ready(function() {
             $('#provinsi2').autocomplete({
-                source: "<?= route('cariprovinsi') ?>",
+                source: "<?= route('cariprovinsi2') ?>",
                 select: function(event, ui) {
                     $('[id="provinsi2"]').val(ui.item.label);
                     $('[id="idprovinsi2"]').val(ui.item.kode);
                 }
             });
             $('#kabupaten2').autocomplete({
-                source: "<?= route('carikabupaten') ?>",
+                source: "<?= route('carikabupaten2') ?>",
                 select: function(event, ui) {
                     $('[id="kabupaten2"]').val(ui.item.label);
                     $('[id="idkabupaten2"]').val(ui.item.kode);
                 }
             });
             $('#kecamatan2').autocomplete({
-                source: "<?= route('carikecamatan') ?>",
+                source: "<?= route('carikecamatan2') ?>",
                 select: function(event, ui) {
                     $('[id="kecamatan2"]').val(ui.item.label);
                     $('[id="idkecamatan2"]').val(ui.item.kode);
@@ -129,7 +129,7 @@
             });
             $('#desa2').autocomplete({
                 source: function(request, response) {
-                    $.getJSON("<?= route('caridesa') ?>", {
+                    $.getJSON("<?= route('caridesa2') ?>", {
                             id: $('#idkecamatan2').val(),
                             desa: $('#desa2').val(),
                         },

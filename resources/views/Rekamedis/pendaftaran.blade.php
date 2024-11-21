@@ -131,7 +131,7 @@
                                     <div class="col-md-2">
                                         <input type="text" class="form-control" id="provinsi" name="provinsi"
                                             placeholder="pilih provinsi ...">
-                                        <input type="text" hidden class="form-control" id="idprovinsi"
+                                        <input type="text"  class="form-control" id="idprovinsi"
                                             name="idprovinsi" placeholder="pilih desa ...">
                                     </div>
                                     <label for="inputPassword"
@@ -139,7 +139,7 @@
                                     <div class="col-md-2">
                                         <input type="text" class="form-control" id="kabupaten" name="kabupaten"
                                             placeholder="pilih kabupaten ...">
-                                        <input type="text" hidden class="form-control" id="idkabupaten"
+                                        <input type="text" class="form-control" id="idkabupaten"
                                             name="idkabupaten" placeholder="pilih desa ...">
                                     </div>
                                 </div>
@@ -148,14 +148,14 @@
                                     <div class="col-md-2">
                                         <input type="text" class="form-control" id="kecamatan" name="kecamatan"
                                             placeholder="pilih kecamatan ...">
-                                        <input type="text" hidden class="form-control" id="idkecamatan"
+                                        <input type="text" class="form-control" id="idkecamatan"
                                             name="idkecamatan" placeholder="pilih desa ...">
                                     </div>
                                     <label for="inputPassword" class="col-sm-1 col-form-label text-right">Desa</label>
                                     <div class="col-md-2">
                                         <input type="text" class="form-control" id="desa" name="desa"
                                             placeholder="pilih desa ...">
-                                        <input type="text" hidden class="form-control" id="iddesa" name="iddesa"
+                                        <input type="text" class="form-control" id="iddesa" name="iddesa"
                                             placeholder="pilih desa ...">
                                     </div>
                                 </div>
@@ -230,22 +230,21 @@
         $(document).ready(function() {
             caripasien()
             caririwayat()
-            $('#provinsi').autocomplete({
-                source: "<?= route('cariprovinsi') ?>",
+            $('#provinsi').autocomplete({source: "<?= route('cariprovinsi2') ?>",
                 select: function(event, ui) {
                     $('[id="provinsi"]').val(ui.item.label);
                     $('[id="idprovinsi"]').val(ui.item.kode);
                 }
             });
             $('#kabupaten').autocomplete({
-                source: "<?= route('carikabupaten') ?>",
+                source: "<?= route('carikabupaten2') ?>",
                 select: function(event, ui) {
                     $('[id="kabupaten"]').val(ui.item.label);
                     $('[id="idkabupaten"]').val(ui.item.kode);
                 }
             });
             $('#kecamatan').autocomplete({
-                source: "<?= route('carikecamatan') ?>",
+                source: "<?= route('carikecamatan2') ?>",
                 select: function(event, ui) {
                     $('[id="kecamatan"]').val(ui.item.label);
                     $('[id="idkecamatan"]').val(ui.item.kode);
@@ -253,7 +252,7 @@
             });
             $('#desa').autocomplete({
                 source: function(request, response) {
-                    $.getJSON("<?= route('caridesa') ?>", {
+                    $.getJSON("<?= route('caridesa2') ?>", {
                             id: $('#idkecamatan').val(),
                             desa: $('#desa').val(),
                         },

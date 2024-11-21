@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\master_paramedis;
 use App\Models\master_unit;
+use App\Models\Mt_pasien;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Satusehat_model;
 
 class MasterController extends Controller
 {
@@ -37,7 +39,8 @@ class MasterController extends Controller
         $menu = "masterpegawai";
         $mt_unit = db::select('select * from mt_unit');
         return view('Master.index_master_pegawai', compact([
-            'menu','mt_unit'
+            'menu',
+            'mt_unit'
         ]));
     }
     public function ambilMaterUnit()
@@ -49,10 +52,11 @@ class MasterController extends Controller
     }
     public function ambilBerkasErm(Request $request)
     {
-        $erm = db::select('select * from ts_kunjungan where no_rm = ?',[$request->rm]);
+        $erm = db::select('select * from ts_kunjungan where no_rm = ?', [$request->rm]);
         $pasien = DB::connection('mysql2')->select('select *,date(tgl_lahir) as tgl_lahir,fc_alamat(no_rm) as alamat from mt_pasien where no_rm = ?', [$request->rm]);
         return view('Master.berkas_erm', compact([
-            'erm','pasien'
+            'erm',
+            'pasien'
         ]));
     }
     public function ambilMasterPasien(Request $request)
@@ -230,6 +234,64 @@ class MasterController extends Controller
             $kd = "001";
         }
         date_default_timezone_set('Asia/Jakarta');
-        return 'DOK' .$kd;
+        return 'DOK' . $kd;
+    }
+    public function kirimPasienSatuSehat()
+    {
+        $pasien = db::select('select *,date(tgl_lahir) as tgl_lahirx from mt_pasien where status_satu_sehat != 1 OR status_satu_sehat is null');
+        $v = new Satusehat_model();
+        foreach ($pasien as $dataSet) {
+            if ($dataSet->jenis_kelamin == 'L') {
+                $jk = 'male';
+            } else {
+                $jk = 'female';
+            }
+            $datasatusehat = [
+                'nik' => $dataSet->nik_bpjs,
+                'passpor' => '-',
+                'kk' => '-',
+                'namapasien' => $dataSet->nama_px,
+                'notelp' => '-',
+                'normh' => '-',
+                'email' => '-',
+                'jeniskelamin' => $jk,
+                'tgllahir' => $dataSet->tgl_lahirx,
+                'alamat' => $dataSet->alamat,
+                'kota' => $dataSet->tempat_lahir,
+                'kodepos' => '-',
+                'prov' => $dataSet->propinsi,
+                'kab' => $dataSet->kabupaten,
+                'kec' => $dataSet->kecamatan,
+                'des' => $dataSet->desa,
+                'rt' => '-',
+                'rw ' => '-',
+                'statuskawin' => '-',
+                'namakeluarga ' => '-',
+                'hubungan ' => '-',
+                'namakeluarga ' => '-',
+                'telpkeluarga ' => '-',
+            ];
+            $p = $v->createPatientByNIK($datasatusehat);
+            $id_satu_sehat = 0;
+            $status_satu_sehat = 0;
+            if ($p['code'] == 200) {
+                $id_satu_sehat = $p['data'];
+                $status_satu_sehat = 1;
+            }
+            if($p['code'] == 400){
+                $id_satu_sehat = $p['data']->data->resourceId;
+                $status_satu_sehat = 1;
+            }
+            $data_mt_pasien = [
+                'id_satu_sehat' => $id_satu_sehat,
+                'status_satu_sehat' => $status_satu_sehat
+            ];
+            Mt_pasien::whereRaw('no_urut = ?', array($dataSet->no_urut))->update($data_mt_pasien);
+        }
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
     }
 }

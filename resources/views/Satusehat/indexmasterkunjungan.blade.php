@@ -4,12 +4,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Master Organization</h1>
+                    <h1 class="m-0">Master Kunjungan</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Master Organization</li>
+                        <li class="breadcrumb-item active">Master Kunjungan</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -20,13 +20,31 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <button class="btn btn-info" data-toggle="modal" data-target="#modaladdukp"><i
-                    class="bi bi-plus-lg mr-1 ml-1"></i> UKP,KEFARMASIAN,LABORATORIUM</button>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tanggal Awal</label>
+                        <input type="date" class="form-control" id="tanggalawal" aria-describedby="emailHelp"
+                            value="{{ $date }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tanggal Akhir</label>
+                        <input type="date" class="form-control" id="tanggalakhir" aria-describedby="emailHelp"
+                            value="{{ $date }}">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success" style="margin-top:32px" onclick="caririwayat()"><i class="bi bi-search mr-2"></i>Cari
+                        Riwayat</button>
+                </div>
+            </div>
             <div class="v_tabel_ukp mt-4">
                 <div class="card">
-                    <div class="card-header">DATA UKP, KEFARMASIAN DAN LABORATORIUM</div>
+                    <div class="card-header">DATA KUNJUNGAN</div>
                     <div class="card-body">
-                        <div class="v2_tabel_ukp">
+                        <div class="v2_tabel_kunjungan">
 
                         </div>
                     </div>
@@ -128,117 +146,28 @@
     <script>
         $(".preloader2").fadeOut();
         $(document).ready(function() {
-            ambildataukp()
-            $('#provinsiukp').autocomplete({
-                source: "<?= route('cariprovinsi') ?>",
-                select: function(event, ui) {
-                    $('[id="provinsiukp"]').val(ui.item.label);
-                    $('[id="kodeprovinsiukp"]').val(ui.item.id);
-                }
-            });
-            $('#kabupatenukp').autocomplete({
-                source: function(request, response) {
-                    $.getJSON("<?= route('carikabupaten') ?>", {
-                            id: $('#kodeprovinsiukp').val(),
-                            kabupaten: $('#kabupatenukp').val(),
-                        },
-                        response);
-                },
-                select: function(event, ui) {
-                    $('[id="kabupatenukp"]').val(ui.item.label);
-                    $('[id="kodekabupatenukp"]').val(ui.item.id);
-                }
-            });
-            $('#kecamatanukp').autocomplete({
-                source: function(request, response) {
-                    $.getJSON("<?= route('carikecamatan') ?>", {
-                            id: $('#kodekabupatenukp').val(),
-                            kecamatan: $('#kecamatanukp').val(),
-                        },
-                        response);
-                },
-                select: function(event, ui) {
-                    $('[id="kecamatanukp"]').val(ui.item.label);
-                    $('[id="kodekecamatanukp"]').val(ui.item.id);
-                }
-            });
-            $('#desaukp').autocomplete({
-                source: function(request, response) {
-                    $.getJSON("<?= route('caridesa') ?>", {
-                            id: $('#kodekecamatanukp').val(),
-                            desa: $('#desaukp').val(),
-                        },
-                        response);
-                },
-                select: function(event, ui) {
-                    $('[id="desaukp"]').val(ui.item.label);
-                    $('[id="kodedesaukp"]').val(ui.item.id);
-                }
-            });
+            caririwayat()
+
         });
-        function ambildataukp()
+        function caririwayat()
         {
             spinner = $('#loader')
             spinner.show();
+            tglawal = $('#tanggalawal').val()
+            tglakhir = $('#tanggalakhir').val()
             $.ajax({
                 type: 'post',
                 data: {
-                    _token: "{{ csrf_token() }}"
+                    _token: "{{ csrf_token() }}",tglawal,tglakhir
                 },
-                url: '<?= route('ambildataukp') ?>',
+                url: '<?= route('ambildatakunjungan_satusehat') ?>',
                 error: function(response) {
                     spinner.hide()
                     alert('error')
                 },
                 success: function(response) {
                     spinner.hide()
-                    $('.v2_tabel_ukp').html(response);
-                }
-            });
-        }
-        function simpanukp() {
-            spinner = $('#loader')
-            spinner.show();
-            var data = $('.formaddukp').serializeArray();
-            $.ajax({
-                async: true,
-                type: 'post',
-                dataType: 'json',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    data: JSON.stringify(data),
-                },
-                url: '<?= route('simpandataukp') ?>',
-                error: function(data) {
-                    spinner.hide()
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Ooops....',
-                        text: 'Sepertinya ada masalah......',
-                        footer: ''
-                    })
-                },
-                success: function(data) {
-                    if (data.kode == 500) {
-                        spinner.hide()
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oopss...',
-                            text: data.message,
-                            footer: ''
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'OK',
-                            text: data.message,
-                            footer: ''
-                        })
-                        setTimeout(function() {
-                            spinner.hide()
-                            ambildataukp()()
-                        }, 4000);
-                    }
+                    $('.v2_tabel_kunjungan').html(response);
                 }
             });
         }

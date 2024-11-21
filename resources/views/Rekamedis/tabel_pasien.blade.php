@@ -1,6 +1,7 @@
 <table id="tabelpasien" class="table table-sm table-bordered text-sm table-hover">
     <thead>
         <th>No RM</th>
+        <th>ID Satu Sehat</th>
         <th>No Identitas</th>
         <th>Nama Pasien</th>
         <th>Tanggal Lahir</th>
@@ -12,6 +13,7 @@
         @foreach ($mt_pasien as $p)
             <tr>
                 <td>{{ $p->no_rm }}</td>
+                <td>{{ $p->id_satu_sehat }}</td>
                 <td>{{ $p->NIK }}</td>
                 <td>{{ $p->nama_pasien }}</td>
                 <td>{{ $p->TGL_LAHIR }}</td>

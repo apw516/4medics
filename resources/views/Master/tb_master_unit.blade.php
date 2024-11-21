@@ -8,7 +8,7 @@
     <tbody>
         @foreach ($mt_unit as $u)
             <tr>
-                <td>{{ $u->kode_unit }}</td>
+                <td>{{ $u->kode_unit }} | {{ $u->loc_ihs_kode}}</td>
                 <td>{{ $u->nama_unit }}</td>
                 <td>
                     @if ($u->group_unit == 'J')
@@ -27,7 +27,6 @@
         @endforeach
     </tbody>
 </table>
-
 <!-- Modal -->
 <div class="modal fade" id="modaleditunit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
