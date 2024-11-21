@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ihs_mt_pasien;
 use App\Models\Log_mt_pasien;
 use App\Models\Mt_pasien;
+use App\Models\Satusehat_model;
 use App\Models\TS_kunjungan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,8 @@ class RekamedisController extends Controller
         $menu = 'pendaftaran';
         $date = $this->get_date();
         return view('Rekamedis.pendaftaran', compact([
-            'menu','date'
+            'menu',
+            'date'
         ]));
     }
     public function riwayatPendaftaran()
@@ -25,7 +27,8 @@ class RekamedisController extends Controller
         $menu = 'riwayatpendaftaran';
         $date = $this->get_date();
         return view('Rekamedis.riwayatpendaftaran', compact([
-            'menu', 'date'
+            'menu',
+            'date'
         ]));
     }
     public function simpanPasienBaru(Request $request)
@@ -55,52 +58,28 @@ class RekamedisController extends Controller
             'alamat' => $dataSet['alamat'],
             'pic' => auth()->user()->id
         ];
-        if($dataSet['jeniskelamin'] == 'L'){
+        if ($dataSet['jeniskelamin'] == 'L') {
             $jk = 'male';
-        }else{
+        } else {
             $jk = 'female';
         }
-
-        $datasatusehat = [
-            'nik' =>$dataSet['nomoridentitas'],
-            'passpor'=>'-',
-            'kk'=>'-',
-            'namapasien'=>$dataSet['namapasien'],
-            'notelp'=>'-',
-            'normh'=>'-',
-            'email'=>'-',
-            'jeniskelamin'=>$jk,
-            'tgllahir'=>$dataSet['tgllahir'],
-            'alamat'=>$dataSet['alamat'],
-            'kota'=> $dataSet['tempatlahir'],
-            'kodepos'=>'-',
-            'prov'=>$dataSet['idprovinsi'],
-            'kab'=>$dataSet['idkabupaten'],
-            'kec'=>$dataSet['idkecamatan'],
-            'des'=>$dataSet['iddesa'],
-            'rt'=>'-',
-            'rw '=>'-',
-            'statuskawin'=>'M',
-            'namakeluarga '=>'-',
-            'hubungan '=>'-',
-            'namakeluarga '=>'-',
-            'telpkeluarga '=>'-',
-        ];
+        $mt_pasien = Mt_pasien::create($data_mt_pasien);
+        $mt_pasien_fix = db::select('select * from mt_pasien where no_urut = ?', [$mt_pasien->id]);
+        $rm = $mt_pasien_fix[0]->no_rm;
         $ihs_mt_pasien = [
-
+            'no_rm' => $rm,
+            'nama_pasien' => $dataSet['namapasien'],
+            'nik' => $dataSet['nomoridentitas'],
+            'jenis_kelamin' => $jk,
+            'tgl_lahir' => $dataSet['tgllahir'],
+            'alamat' => $dataSet['alamat'],
+            'kota' => $dataSet['tempatlahir'],
+            'kode_prov' => $dataSet['idprovinsi'],
+            'kode_kab' => $dataSet['idkabupaten'],
+            'kode_kec' => $dataSet['idkecamatan'],
+            'kode_des' => $dataSet['iddesa'],
         ];
-        $p = $v->createPatientByNIK($datasatusehat);
-        $id_satu_sehat = 0;
-        $status_satu_sehat = 0;
-        if ($p['code'] == 200) {
-            // DD($p);
-            $id_satu_sehat = $p['data'];
-            $status_satu_sehat = 1;
-        }
-
-        // dd($data_mt_pasien);
-        Mt_pasien::create($data_mt_pasien);
-        ihs_mt_pasien::create($ihs_mt_pasien);
+        $mt_pasien = ihs_mt_pasien::create($ihs_mt_pasien);
         $data = [
             'kode' => 200,
             'message' => 'sukses',
@@ -214,8 +193,8 @@ class RekamedisController extends Controller
     public function get_rm()
     {
         $y = DB::select('SELECT MAX(RIGHT(no_rm,6)) AS kd_max FROM mt_pasien');
-        if($y[0]->kd_max >= 999999){
-            $y = DB::connection('mysql2')->select('SELECT MAX(RIGHT(no_rm,6)) AS kd_max FROM mt_pasien where LEFT(no_rm,2) = ?',['01']);
+        if ($y[0]->kd_max >= 999999) {
+            $y = DB::connection('mysql2')->select('SELECT MAX(RIGHT(no_rm,6)) AS kd_max FROM mt_pasien where LEFT(no_rm,2) = ?', ['01']);
             if (count($y) > 0) {
                 foreach ($y as $k) {
                     $tmp = ((int) $k->kd_max) + 1;
@@ -225,8 +204,8 @@ class RekamedisController extends Controller
                 $kd = "000001";
             }
             date_default_timezone_set('Asia/Jakarta');
-            return '01'.$kd;
-        }else{
+            return '01' . $kd;
+        } else {
             if (count($y) > 0) {
                 foreach ($y as $k) {
                     $tmp = ((int) $k->kd_max) + 1;
@@ -279,7 +258,7 @@ class RekamedisController extends Controller
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
-                        'label' => $row->nama_desa.' | '. $row->nama_kecamatan,
+                        'label' => $row->nama_desa . ' | ' . $row->nama_kecamatan,
                         'kode' => $row->id_desa,
                     );
                 echo json_encode($arr_result);
@@ -349,7 +328,9 @@ class RekamedisController extends Controller
         $kunjungan = DB::connection('mysql2')->select('select counter,tgl_masuk,fc_nama_unit1(kode_unit) as nama_unit,status_kunjungan,fc_NAMA_PARAMEDIS1(kode_paramedis) as nama_dokter from ts_kunjungan where no_rm = ? order by counter desc', [$rm]);
         $date = $this->get_date();
         return view('Rekamedis.form_pendaftaran', compact([
-            'pasien', 'date', 'kunjungan'
+            'pasien',
+            'date',
+            'kunjungan'
         ]));
     }
     public function ambilFormEditPasien(Request $request)
@@ -360,13 +341,17 @@ class RekamedisController extends Controller
         $kab = $pasien[0]->kode_kabupaten;
         $kec = $pasien[0]->kode_kecamatan;
         $des = $pasien[0]->kode_desa;
-        $provinsi = DB::select('select * from mt_lokasi_provinces where id = ?',[$prov]);
-        $kabupaten = DB::select('select * from mt_lokasi_regencies where id = ?',[$kab]);
-        $kecamatan = DB::select('select * from mt_lokasi_districts where id = ?',[$kec]);
-        $desa = DB::select('select * from mt_lokasi_villages where id = ?',[$des]);
+        $provinsi = DB::select('select * from mt_lokasi_provinces where id = ?', [$prov]);
+        $kabupaten = DB::select('select * from mt_lokasi_regencies where id = ?', [$kab]);
+        $kecamatan = DB::select('select * from mt_lokasi_districts where id = ?', [$kec]);
+        $desa = DB::select('select * from mt_lokasi_villages where id = ?', [$des]);
         $date = $this->get_date();
         return view('Rekamedis.form_edit_pasien', compact([
-            'pasien','provinsi','kabupaten','kecamatan','desa'
+            'pasien',
+            'provinsi',
+            'kabupaten',
+            'kecamatan',
+            'desa'
         ]));
     }
     public function ambilRiwayatDaftar(Request $request)
@@ -394,23 +379,26 @@ class RekamedisController extends Controller
             'kunjungan'
         ]));
     }
-    public function indexMasterPasien(){
+    public function indexMasterPasien()
+    {
         $menu = 'masterpasien';
-        return view('Rekamedis.index_master_pasien',compact([
+        return view('Rekamedis.index_master_pasien', compact([
             'menu'
         ]));
     }
-    public function dataMasterPasien(){
-        $data = DB::select('select * from mt_pasien order by tgl_entry limit 1000' );
-        return view('Rekamedis.tabel_master_pasien',compact([
+    public function dataMasterPasien()
+    {
+        $data = DB::select('select * from mt_pasien order by tgl_entry limit 1000');
+        return view('Rekamedis.tabel_master_pasien', compact([
             'data'
         ]));
     }
-    public function hapusPasien(request $request){
-        $datapasien = DB::select('select *,fc_alamat(no_rm) as alamat2 from mt_pasien where no_rm = ?',[$request->rm]);
+    public function hapusPasien(request $request)
+    {
+        $datapasien = DB::select('select *,fc_alamat(no_rm) as alamat2 from mt_pasien where no_rm = ?', [$request->rm]);
         $log = [
             'no_rm' => $request->rm,
-            'catatan' => 'data pasien '. $datapasien[0]->nama_px .' alamat '. $datapasien[0]->alamat2 . ' data dihapus oleh id user : '.auth()->user()->id. ' Nama User : '. auth()->user()->nama,
+            'catatan' => 'data pasien ' . $datapasien[0]->nama_px . ' alamat ' . $datapasien[0]->alamat2 . ' data dihapus oleh id user : ' . auth()->user()->id . ' Nama User : ' . auth()->user()->nama,
             'tgl_edit' => $this->get_now()
         ];
         Log_mt_pasien::create($log);
