@@ -55,6 +55,11 @@ class RekamedisController extends Controller
             'alamat' => $dataSet['alamat'],
             'pic' => auth()->user()->id
         ];
+        if($dataSet['jeniskelamin'] == 'L'){
+            $jk = 'male';
+        }else{
+            $jk = 'female';
+        }
         $ihs_mt_pasien = [
 
         ];
