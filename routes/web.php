@@ -6,6 +6,7 @@ use App\Http\Controllers\FarmasiController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
+use App\Http\Controllers\SatuSehatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +52,7 @@ Route::get('/carikabupaten', [RekamedisController::class, 'cariKabupaten'])->nam
 Route::get('/carikecamatan', [RekamedisController::class, 'cariKecamatan'])->name('carikecamatan');
 Route::get('/cariunit', [RekamedisController::class, 'cariUnit'])->name('cariunit');
 Route::get('/caridokter', [RekamedisController::class, 'cariDokter'])->name('caridokter');
+Route::get('/caridiagnosa', [RekamedisController::class, 'cariDiagnosa'])->name('caridiagnosa');
 Route::post('/hapuspasien', [RekamedisController::class, 'hapusPasien'])->name('hapuspasien');
 
 
@@ -110,3 +112,5 @@ Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegaw
 Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');
+Route::post('/kirimdatapasiensatusehat', [MasterController::class, 'kirimPasienSatuSehat'])->name('kirimdatapasiensatusehat');
+

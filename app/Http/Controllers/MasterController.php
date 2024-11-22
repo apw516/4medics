@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\master_paramedis;
 use App\Models\master_unit;
+use App\Models\Satusehat_model;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -231,5 +232,10 @@ class MasterController extends Controller
         }
         date_default_timezone_set('Asia/Jakarta');
         return 'DOK' .$kd;
+    }
+    public function kirimPasienSatuSehat(Request $request){
+        $rm = $request->rm;
+        $data = db::select('select * from ihs_mt_pasien where no_rm =?',[$rm]);
+
     }
 }

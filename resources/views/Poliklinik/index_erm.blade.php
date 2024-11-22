@@ -201,6 +201,18 @@
 {{ $cekassesmen[0]->assesment }}
 @endif
 </textarea>
+<div class="form-group mt-3">
+    <label for="exampleInputEmail1">Diagnosa Primer</label>
+    <input type="email" class="form-control" id="displaydiagnosaprimer" name="displaydiagnosaprimer" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->display_diagnosa_primer }} @endif">
+    <input type="email" class="form-control" id="kodediagnosaprimer" name="kodediagnosaprimer" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->diagnosa_primer }} @endif">
+  </div>
+<div class="form-group mt-3">
+    <label for="exampleInputEmail1">Diagnosa Sekunder</label>
+    <input type="email" class="form-control" id="displaydiagnosasekunder" name="displaydiagnosasekunder" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->display_diagnosa_sekunder }} @endif">
+        <input type="email" class="form-control" id="kodediagnosasekunder" name="kodediagnosasekunder" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->diagnosa_sekunder }} @endif">
+
+  </div>
+
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -509,3 +521,24 @@
             }
         });
     }
+    $(document).ready(function() {
+        $('#displaydiagnosaprimer').autocomplete({
+            source: "<?= route('caridiagnosa') ?>",
+            select: function(event, ui) {
+                $('[id="displaydiagnosaprimer"]').val(ui.item.label);
+                $('[id="kodediagnosaprimer"]').val(ui.item.id);
+            }
+        });
+    });
+    $(document).ready(function() {
+        $('#displaydiagnosasekunder').autocomplete({
+            source: "<?= route('caridiagnosa') ?>",
+            select: function(event, ui) {
+                $('[id="displaydiagnosasekunder"]').val(ui.item.label);
+                $('[id="kodediagnosasekunder"]').val(ui.item.id);
+            }
+        });
+    });
+
+
+

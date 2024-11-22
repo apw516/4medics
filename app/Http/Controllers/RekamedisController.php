@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ihs_mt_pasien;
+use App\Models\ihs_ts_kunjungan;
 use App\Models\Log_mt_pasien;
 use App\Models\Mt_pasien;
 use App\Models\Satusehat_model;
@@ -150,7 +151,6 @@ class RekamedisController extends Controller
             echo json_encode($data);
             die;
         }
-
         $data_kunjungan = [
             'counter' => $counter,
             'no_rm' => $dataSet['rm'],
@@ -160,7 +160,22 @@ class RekamedisController extends Controller
             'kode_penjamin' => 'P01',
             'pic' => auth()->user()->id
         ];
-        TS_kunjungan::create($data_kunjungan);
+        $pasien = db::select('select * from mt_pasien where no_rm = ?',[$dataSet['rm']]);
+        $unit = db::select('select * from mt_unit where kode_unit = ?',[$dataSet['idunit']]);
+        $ts_kunjungan = TS_kunjungan::create($data_kunjungan);
+        $ihs_data_kunjungan = [
+            'kode_kunjungan' => $ts_kunjungan->id,
+            'no_rm' => $dataSet['rm'],
+            'kode_ihs_pasien' => 0,
+            'nama_pasien' => $pasien[0]->nama_px,
+            'kode_ihs_dokter' => 'N10000001',
+            'nama_dokter' => 'Voigt',
+            'tgl_masuk' => $dataSet['tanggalkunjungan'],
+            'jam_masuk' => $this->get_time(),
+            'kode_ihs_poli' => $unit[0]->loc_ihs_kode,
+            'nama_poli' => $unit[0]->nama_unit,
+        ];
+        $ihs_ts_kunjungan_save = ihs_ts_kunjungan::create($ihs_data_kunjungan);
         $data = [
             'kode' => 200,
             'message' => 'sukses'
@@ -218,6 +233,19 @@ class RekamedisController extends Controller
             return date('y') . $kd;
         }
     }
+    public function cariDiagnosa(Request $request)
+    {
+        $key = $request['term'];
+        $result = DB::connection('mysql2')->select("select * from mt_icd10 where nama like '%$key%'");
+        if (count($result) > 0) {
+            foreach ($result as $row)
+                $arr_result[] = array(
+                    'label' => $row->nama,
+                    'id' => $row->diag,
+                );
+            echo json_encode($arr_result);
+        }
+    }
     public function cariUnit(Request $request)
     {
         $key = $request['term'];
@@ -249,16 +277,26 @@ class RekamedisController extends Controller
         // dd($request);
         $key = $request['desa'];
         $kec = $request['id'];
+        // dd($kec);
         if (strlen($key) > 4) {
-            $result = DB::select("SELECT a.id as id_desa,a.name as nama_desa,b.id as id_kecamatan,b.name as nama_kecamatan,c.id as id_kabupaten,c.name as nama_kabupaten,d.id as id_prov, d.name as nama_prov FROM mt_lokasi_villages a
-         JOIN mt_lokasi_districts b ON a.`district_id` = b.`id`
-         JOIN mt_lokasi_regencies c ON b.regency_id = c.id
-         JOIN mt_lokasi_provinces d on c.province_id = d.id
-        WHERE b.id = '$kec' and a.name LIKE '%$key%'");
+        $result = DB::select("SELECT a.code as id_desa
+        ,a.name as nama_desa
+        ,b.bps_code as id_kecamatan
+        ,b.name as nama_kecamatan
+        ,c.bps_code as id_kabupaten
+        ,c.name as nama_kabupaten
+        ,d.bps_code as id_prov
+        , d.name as nama_prov
+        FROM mt_lokasi_desa_satu_sehat a
+        JOIN mt_lokasi_kecamatan_satu_sehat b ON a.`parent_code` = b.`code`
+        JOIN mt_lokasi_kabupaten_satu_sehat c ON b.parent_code = c.code
+        JOIN mt_lokasi_provinsi_satu_sehat d on c.parent_code = d.bps_code
+        WHERE b.code = '$kec' and a.name LIKE '%$key%'");
+        // dd($result);
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
-                        'label' => $row->nama_desa . ' | ' . $row->nama_kecamatan,
+                        'label' => $row->nama_desa.' | '. $row->nama_kecamatan,
                         'kode' => $row->id_desa,
                     );
                 echo json_encode($arr_result);
@@ -268,13 +306,14 @@ class RekamedisController extends Controller
     public function cariProvinsi(Request $request)
     {
         $key = $request['term'];
+        // dd($key);
         if (strlen($key) >= 4) {
-            $result = DB::select("select * from mt_lokasi_provinces where name LIKE '%$key%'");
+            $result = DB::select("select * from mt_lokasi_provinsi_satu_sehat where name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
                         'label' => $row->name,
-                        'kode' => $row->id,
+                        'kode' => $row->bps_code,
                     );
                 echo json_encode($arr_result);
             }
@@ -284,12 +323,12 @@ class RekamedisController extends Controller
     {
         $key = $request['term'];
         if (strlen($key) >= 4) {
-            $result = DB::select("select * from mt_lokasi_regencies where name LIKE '%$key%'");
+            $result = DB::select("select * from mt_lokasi_kabupaten_satu_sehat where name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
                         'label' => $row->name,
-                        'kode' => $row->id,
+                        'kode' => $row->bps_code,
                     );
                 echo json_encode($arr_result);
             }
@@ -299,7 +338,7 @@ class RekamedisController extends Controller
     {
         $key = $request['term'];
         if (strlen($key) >= 4) {
-            $result = DB::select("select *,a.name as nama_kecamatan,b.name as nama_kabupaten,a.id as id_kec from mt_lokasi_districts a inner join mt_lokasi_regencies b on a.regency_id = b.id where a.name LIKE '%$key%'");
+            $result = DB::select("select *,a.name as nama_kecamatan,b.name as nama_kabupaten,a.code as id_kec from mt_lokasi_kecamatan_satu_sehat a inner join mt_lokasi_kabupaten_satu_sehat b on a.parent_code = b.bps_code where a.name LIKE '%$key%'");
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(

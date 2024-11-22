@@ -9,6 +9,7 @@ use App\Models\erm_assesmen_dokter;
 use App\Models\bridging_ris;
 use App\Models\farmasidetailorder;
 use App\Models\farmasiheaderorder;
+use App\Models\ihs_ts_kunjungan;
 use App\Models\TS_kunjungan;
 
 class PoliKlinikController extends Controller
@@ -81,11 +82,20 @@ class PoliKlinikController extends Controller
         $mt_pasien = DB::connection('mysql2')->select('select *,fc_alamat(no_rm) as alamat2,date(tgl_lahir) as tgl_lahir2 from mt_pasien where no_rm = ?', [$kunjungan[0]->no_rm]);
         $rm = $mt_pasien[0]->no_rm;
         $cekassesmen = DB::connection('mysql2')->select('select * from erm_assesmen_medis where no_rm = ? and id = (select max(id) as id from erm_assesmen_medis where no_rm = ?)', [$rm, $rm]);
+        $cekdiagnosa = DB::connection('mysql2')->select('select * from ihs_ts_kunjungan where no_rm = ? and id = (select max(id) as id from ihs_ts_kunjungan where no_rm = ?)', [$rm, $rm]);
+        $cekihskunjungan = db::select('select * from ihs_ts_kunjungan where kode_kunjungan = ?',[$kodekunjungan]);
+        if($cekihskunjungan[0]->status_antrian == 0){
+            $dataihskunjungan = [
+                'status_antrian' => 1,
+                'jam_panggil' => $this->get_time(),
+            ];
+            ihs_ts_kunjungan::whereRaw('kode_kunjungan = ?', array($kodekunjungan))->update($dataihskunjungan);
+        }
         return view('Poliklinik.index_erm', compact([
             'mt_pasien',
             'kunjungan',
             'cekassesmen',
-            'rm'
+            'rm','cekdiagnosa'
         ]));
     }
     public function ambilRiwayatPemeriksaan(Request $request)
@@ -142,9 +152,25 @@ class PoliKlinikController extends Controller
         } else {
             erm_assesmen_dokter::create($data_pemeriksaan);
         }
+        $kodekunjungan = $dataSet['kodekunjungan'];
         TS_kunjungan::whereRaw('kode_kunjungan = ?', array($dataSet['kodekunjungan']))->update(['kode_paramedis' => auth()->user()->kode_paramedis]);
-
-
+        $dataSet['displaydiagnosaprimer'];
+        $dataSet['kodediagnosaprimer'];
+        $dataSet['displaydiagnosasekunder'];
+        $dataSet['kodediagnosasekunder'];
+        $ihs_kunjungan = [
+            'jam_selesai' => $this->get_time(),
+            'keluhan_pasien' =>  $dataSet['subject'],
+            'kode_ihs_dokter' => 'N10000001',
+            'nama_dokter' => 'Voigt',
+            'diagnosa_primer' =>$dataSet['kodediagnosaprimer'],
+            'display_diagnosa_primer' => $dataSet['displaydiagnosaprimer'],
+            'diagnosa_sekunder' =>$dataSet['kodediagnosasekunder'],
+            'display_diagnosa_sekunder' => $dataSet['displaydiagnosasekunder'],
+            'status_pemeriksaan' => 2,
+            'planning' => $dataSet['planning'],
+        ];
+        ihs_ts_kunjungan::whereRaw('kode_kunjungan = ?', array($kodekunjungan))->update($ihs_kunjungan);
         //farmasi
         if (count($data3) > 0) {
             $mt_pasien = db::select('select * from mt_pasien where no_rm = ?', [$dataSet['norm']]);
