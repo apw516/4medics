@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ihs_ts_kunjungan;
+use App\Models\ihs_mt_pasien;
+use App\Models\ihs_status_encounter;
 use App\Models\master_paramedis;
 use App\Models\master_unit;
 use App\Models\Satusehat_model;
@@ -9,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Exception;
 
 class MasterController extends Controller
 {
@@ -18,6 +22,22 @@ class MasterController extends Controller
         return view('Master.index_master_pasien', compact([
             'menu'
         ]));
+    }
+    public function indexMasterKunjungan()
+    {
+        $menu = "masterkunjungan";
+        $date = $this->get_date();
+        return view('Master.index_master_kunjungan', compact([
+            'menu',
+            'date'
+        ]));
+    }
+    public function get_date()
+    {
+        $dt = Carbon::now()->timezone('Asia/Jakarta');
+        $date = $dt->toDateString();
+        $now = $date;
+        return $now;
     }
     public function indexMasterUnit()
     {
@@ -38,7 +58,8 @@ class MasterController extends Controller
         $menu = "masterpegawai";
         $mt_unit = db::select('select * from mt_unit');
         return view('Master.index_master_pegawai', compact([
-            'menu','mt_unit'
+            'menu',
+            'mt_unit'
         ]));
     }
     public function ambilMaterUnit()
@@ -50,10 +71,11 @@ class MasterController extends Controller
     }
     public function ambilBerkasErm(Request $request)
     {
-        $erm = db::select('select * from ts_kunjungan where no_rm = ?',[$request->rm]);
+        $erm = db::select('select * from ts_kunjungan where no_rm = ?', [$request->rm]);
         $pasien = DB::connection('mysql2')->select('select *,date(tgl_lahir) as tgl_lahir,fc_alamat(no_rm) as alamat from mt_pasien where no_rm = ?', [$request->rm]);
         return view('Master.berkas_erm', compact([
-            'erm','pasien'
+            'erm',
+            'pasien'
         ]));
     }
     public function ambilMasterPasien(Request $request)
@@ -154,6 +176,7 @@ class MasterController extends Controller
         }
         $data2 = [
             'username' => $dataSet['username'],
+            'ihs_code' => $dataSet['ihs_code'],
             'kode_paramedis' => $dataSet['kode_paramedis'],
             'nama' => $dataSet['namalengkap'],
             'hak_akses' => $dataSet['hakakses'],
@@ -231,11 +254,319 @@ class MasterController extends Controller
             $kd = "001";
         }
         date_default_timezone_set('Asia/Jakarta');
-        return 'DOK' .$kd;
+        return 'DOK' . $kd;
     }
-    public function kirimPasienSatuSehat(Request $request){
+    public function kirimPasienSatuSehat(Request $request)
+    {
         $rm = $request->rm;
-        $data = db::select('select * from ihs_mt_pasien where no_rm =?',[$rm]);
-
+        $data = db::select('select * from ihs_mt_pasien where no_rm =?', [$rm]);
+        $datasatusehat = [
+            'nik' => $data[0]->nik,
+            'namapasien' => $data[0]->nama_pasien,
+            'notelp' => '-',
+            'normh' => '-',
+            'email' => '-',
+            'jeniskelamin' => $data[0]->jenis_kelamin,
+            'tgllahir' => $data[0]->tgl_lahir,
+            'alamat' => $data[0]->alamat,
+            'kota' => $data[0]->kota,
+            'kodepos' => '-',
+            'prov' => $data[0]->kode_prov,
+            'kab' => $data[0]->kode_kab,
+            'kec' => $data[0]->kode_kec,
+            'des' => $data[0]->kode_des,
+        ];
+        if ($data[0]->status == 1) {
+            $data = [
+                'kode' => 500,
+                'message' => 'Pasien sudah memiliki kode satu sehat'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $v = new Satusehat_model();
+        $p = $v->createPatientByNIK($datasatusehat);
+        // dd($p);
+        $id_satu_sehat = 0;
+        $status_satu_sehat = 0;
+        if ($p['code'] == 200) {
+            $id_satu_sehat = $p['data'];
+            $status_satu_sehat = 1;
+        } else {
+            $data = [
+                'kode' => 500,
+                'message' => 'gagal kirim data satu sehat ... '
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $datapasien = [
+            'ihs_code' => $id_satu_sehat,
+            'status' => $status_satu_sehat,
+        ];
+        ihs_mt_pasien::whereRaw('no_rm = ?', array($rm))->update($datapasien);
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
+    }
+    public function kirimKunjunganSatuSehat(Request $request)
+    {
+        $v = new Satusehat_model();
+        $id = $request->idk;
+        $data_kunjungan1 = db::select('select * from ihs_ts_kunjungan where id = ?', [$id]);
+        $pasien = db::select('select * from ihs_mt_pasien where no_rm = ?', [$data_kunjungan1[0]->no_rm]);
+        // dd($data_kunjungan1[0]->no_rm);
+        $idpasien = $pasien[0]->ihs_code;
+        if ($idpasien == 0) {
+            $data = [
+                'kode' => 500,
+                'message' => 'Pasien belum memiliki id satu sehat ... '
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $idkunjungan = $id;
+        $cek = db::select('select * from ihs_status_enocunter where id_ihs_ts_kunjungan = ?', [$id]);
+        if (count($cek) > 0) {
+            $id_ihs_monitoring = $cek[0]->id;
+        } else {
+            $ihs_monitoring = ihs_status_encounter::create(['id_ihs_ts_kunjungan' => $id]);
+            $id_ihs_monitoring = $ihs_monitoring->id;
+            $cek = db::select('select * from ihs_status_enocunter where id = ?', [$id_ihs_monitoring]);
+        }
+        if ($data_kunjungan1[0]->status_ihs == 0) {
+            $data_create_encounter = [
+                'idpasien' => $idpasien,
+                'namapasien' => $data_kunjungan1[0]->nama_pasien,
+                'iddokter' => $data_kunjungan1[0]->kode_ihs_dokter,
+                'namadokter' => $data_kunjungan1[0]->nama_dokter,
+                'tglmasuk' => $data_kunjungan1[0]->tgl_masuk,
+                'jammasuk' => $data_kunjungan1[0]->jam_masuk,
+                'idpoli' => $data_kunjungan1[0]->kode_ihs_poli,
+                'namapoli' => $data_kunjungan1[0]->nama_poli,
+            ];
+            try {
+                $p = $v->createEncounter($data_create_encounter);
+                $id_satu_sehat = 0;
+                $status_satu_sehat = 0;
+                if ($p['code'] == 200) {
+                    $id_satu_sehat = $p['data']->id;
+                    $status_satu_sehat = 1;
+                } else {
+                    $data = [
+                        'kode' => 500,
+                        'message' => 'gagal kirim data satu sehat ... '
+                    ];
+                    echo json_encode($data);
+                    die;
+                }
+                $data_kunjungan = [
+                    'ihs_code' => $id_satu_sehat,
+                    'status_ihs' => $status_satu_sehat,
+                    'kode_ihs_pasien' => $idpasien
+                ];
+                ihs_ts_kunjungan::whereRaw('id = ?', array($id))->update($data_kunjungan);
+                ihs_status_encounter::whereRaw('id = ?', array($id_ihs_monitoring))->update(['id_encounter' => $id_satu_sehat, 'status_kunjungan' => $status_satu_sehat]);
+            } catch (\Exception $e) {
+                $data = [
+                    'kode' => 500,
+                    'message' => $e->getMessage(),
+                ];
+                echo json_encode($data);
+                die;
+            }
+        }
+        if ($cek[0]->status_masuk_ruangan == 0) {
+            $data_kunjungan1 = db::select('select * from ihs_ts_kunjungan where id = ?', [$id]);
+            try {
+                $status_satu_sehat_2 = 0;
+                $data_update_encounter = [
+                    'id_kunjungan_ihs' => $data_kunjungan1[0]->ihs_code,
+                    'idpasien' => $idpasien,
+                    'namapasien' => $data_kunjungan1[0]->nama_pasien,
+                    'iddokter' => $data_kunjungan1[0]->kode_ihs_dokter,
+                    'namadokter' => $data_kunjungan1[0]->nama_dokter,
+                    'tglmasuk' => $data_kunjungan1[0]->tgl_masuk,
+                    'jammasuk' => $data_kunjungan1[0]->jam_masuk,
+                    'jam_panggil' => $data_kunjungan1[0]->jam_panggil,
+                    'idpoli' => $data_kunjungan1[0]->kode_ihs_poli,
+                    'namapoli' => $data_kunjungan1[0]->nama_poli,
+                ];
+                $p2 = $v->updateEncounter($data_update_encounter);
+                if ($p2['code'] == 200) {
+                    $status_satu_sehat_2 = 1;
+                }
+                ihs_status_encounter::whereRaw('id = ?', array($id_ihs_monitoring))->update(['status_masuk_ruangan' => $status_satu_sehat_2]);
+            } catch (\Exception $e) {
+            }
+        }
+        if ($cek[0]->status_anamnesis == 0) {
+            $data_kunjungan1 = db::select('select * from ihs_ts_kunjungan where id = ?', [$id]);
+            try {
+                $status_satu_sehat_3 = 0;
+                $data_anamnesa = [
+                    'id_kunjungan_ihs' => $data_kunjungan1[0]->ihs_code,
+                    'idpasien' => $idpasien,
+                    'namapasien' => $data_kunjungan1[0]->nama_pasien,
+                    'iddokter' => $data_kunjungan1[0]->kode_ihs_dokter,
+                    'namadokter' => $data_kunjungan1[0]->nama_dokter,
+                    'tglmasuk' => $data_kunjungan1[0]->tgl_masuk,
+                    'jammasuk' => $data_kunjungan1[0]->jam_panggil,
+                    'idpoli' => $data_kunjungan1[0]->kode_ihs_poli,
+                    'namapoli' => $data_kunjungan1[0]->nama_poli,
+                    'keluhan' => $data_kunjungan1[0]->keluhan_pasien,
+                ];
+                $p3 = $v->anamnesisKeluhanUtama($data_anamnesa);
+                if ($p3['code'] == 200) {
+                    $status_satu_sehat_3 = 1;
+                    ihs_status_encounter::whereRaw('id = ?', array($id_ihs_monitoring))->update(['status_anamnesis' => $status_satu_sehat_3]);
+                }
+            } catch (\Exception $e) {
+            }
+        }
+        if ($cek[0]->status_diagnosis == 0) {
+            $data_kunjungan1 = db::select('select * from ihs_ts_kunjungan where id = ?', [$id]);
+            try {
+                $status_satu_sehat_4 = 0;
+                $data_diganosa = [
+                    'id_kunjungan_ihs' => $data_kunjungan1[0]->ihs_code,
+                    'idpasien' => $idpasien,
+                    'namapasien' => $data_kunjungan1[0]->nama_pasien,
+                    'iddokter' => $data_kunjungan1[0]->kode_ihs_dokter,
+                    'namadokter' => $data_kunjungan1[0]->nama_dokter,
+                    'tglmasuk' => $data_kunjungan1[0]->tgl_masuk,
+                    'jammasuk' => $data_kunjungan1[0]->jam_panggil,
+                    'idpoli' => $data_kunjungan1[0]->kode_ihs_poli,
+                    'namapoli' => $data_kunjungan1[0]->nama_poli,
+                    'keluhan' => $data_kunjungan1[0]->keluhan_pasien,
+                    'diagnosa' => $data_kunjungan1[0]->diagnosa_primer,
+                    'diagnosadisplay' => $data_kunjungan1[0]->display_diagnosa_primer,
+                ];
+                $p4 = $v->diagnosaprimer($data_diganosa);
+                // dd($data_diganosa);
+                $id_diagnosa = 0;
+                if ($p4['code'] == 200) {
+                    $id_diagnosa = $p4['data']->id;
+                    $status_satu_sehat_4 = 1;
+                }
+                $data_kunjungan_2 = [
+                    'ihs_code_diagnosa' => $id_diagnosa,
+                ];
+                ihs_ts_kunjungan::whereRaw('id = ?', array($id))->update($data_kunjungan_2);
+                ihs_status_encounter::whereRaw('id = ?', array($id_ihs_monitoring))->update(['status_diagnosis' => $status_satu_sehat_4, 'ref_diagnosis' => $id_diagnosa]);
+            } catch (Exception $e) {
+            }
+        }
+        if ($cek[0]->status_encounter == 0) {
+            $data_kunjungan1 = db::select('select * from ihs_ts_kunjungan where id = ?', [$id]);
+            try {
+                $status_satu_sehat_5 = 0;
+                $data_pulang = [
+                    'id_kunjungan_ihs' => $data_kunjungan1[0]->ihs_code,
+                    'idpasien' => $idpasien,
+                    'namapasien' => $data_kunjungan1[0]->nama_pasien,
+                    'iddokter' => $data_kunjungan1[0]->kode_ihs_dokter,
+                    'namadokter' => $data_kunjungan1[0]->nama_dokter,
+                    'tglmasuk' => $data_kunjungan1[0]->tgl_masuk,
+                    'jammasuk' => $data_kunjungan1[0]->jam_masuk,
+                    'jampanggil' => $data_kunjungan1[0]->jam_panggil,
+                    'jam_selesai' => $data_kunjungan1[0]->jam_selesai,
+                    'idpoli' => $data_kunjungan1[0]->kode_ihs_poli,
+                    'namapoli' => $data_kunjungan1[0]->nama_poli,
+                    'keluhan' => $data_kunjungan1[0]->keluhan_pasien,
+                    'rencana' => trim($data_kunjungan1[0]->planning),
+                    'ihs_code_diagnosa' => $data_kunjungan1[0]->ihs_code_diagnosa,
+                    'diagnosa' => $data_kunjungan1[0]->diagnosa_primer,
+                    'diagnosadisplay' => $data_kunjungan1[0]->display_diagnosa_primer,
+                ];
+                // dd($data_pulang);
+                $p5 = $v->updatePulang($data_pulang);
+                if ($p5['code'] == 200) {
+                    $status_satu_sehat_5 = 1;
+                    ihs_status_encounter::whereRaw('id = ?', array($id_ihs_monitoring))->update(['status_encounter' => $status_satu_sehat_5]);
+                }
+            } catch (Exception $e) {
+            }
+        }
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
+    }
+    public function kirimdataunitsatusehat(Request $request)
+    {
+        $namaunit = $request->namaunit;
+        $v = new Satusehat_model();
+        $p = $v->CreateOrganizationPoli($namaunit);
+        try{
+            if($p['code'] == 200){
+                $id = $p['data']->id;
+                $dataunit = [
+                    'loc_ihs_kode' => $id
+                ];
+                master_unit::whereRaw('id = ?', array($request->idunit))->update($dataunit);
+                $data = [
+                    'kode' => 200,
+                    'message' => 'Data berhasil dikirim'
+                ];
+                echo json_encode($data);
+            }else{
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Gagal kirim data ...!'
+                ];
+                echo json_encode($data);
+            }
+        }catch(\exception $e){
+            $data = [
+                'kode' => 500,
+                'message' => $e->getMessage()
+            ];
+            echo json_encode($data);
+        }
+    }
+    public function ambilDataKunjunganIHS(Request $request)
+    {
+        $awal = $request->awal;
+        $akhir = $request->akhir;
+        $data = DB::connection('mysql')->select('select *,a.id as idk  from ihs_ts_kunjungan a left outer join ihs_status_enocunter b on a.id = b.id_ihs_ts_kunjungan where a.tgl_masuk between ? and ?', [$awal, $akhir]);
+        // dd($data);
+        return view('Master.tabel_kunjungan_ihs', compact([
+            'data'
+        ]));
+    }
+    public function cariPasienSatusehat(Request $request){
+       $ktp = $request->nomorktp;
+       $v = new Satusehat_model();
+       $p = $v->searchpatienbynik($ktp);
+       if($p['code'] == 200){
+            $id = $p['data']->entry[0]->resource->id;
+       }else{
+            $id = 0;
+       }
+        return view('Master.data_pasien_ihs_by_nik',compact([
+            'ktp','id'
+        ]));
+    }
+    public function editPasienIHS(Request $request){
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $datapasien = [
+            'status' => 1,
+            'ihs_code' => $dataSet['idsatusehatpasien']
+        ];
+        ihs_mt_pasien::whereRaw('no_rm = ?', array($dataSet['rmpasien']))->update($datapasien);
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
     }
 }

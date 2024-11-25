@@ -56,7 +56,8 @@
                             </tr>
                             <tr>
                                 <td class="font-italic" colspan="2">
-                                    Assesment ( A ) : {{ trim($as->assesment) }}
+                                    Assesment ( A ) : {{ trim($as->assesment) }} <br>
+                                    Diagnosa : {{ trim($as->diagnosa_primer)}} | {{ $as->display_diagnosa_primer }}
                                 </td>
                             </tr>
                             <tr>

@@ -1,6 +1,7 @@
 <table id="tabelmasterunit" class="table table-sm table-bordered table-hover">
     <thead>
         <th>Kode Unit</th>
+        <th>Kode IHS</th>
         <th>Nama Unit</th>
         <th>Tipe Unit</th>
         <th>Action</th>
@@ -9,6 +10,7 @@
         @foreach ($mt_unit as $u)
             <tr>
                 <td>{{ $u->kode_unit }}</td>
+                <td>{{ $u->loc_ihs_kode }}</td>
                 <td>{{ $u->nama_unit }}</td>
                 <td>
                     @if ($u->group_unit == 'J')
@@ -22,12 +24,13 @@
                 <td>
                     <button idunit="{{ $u->id }}" class="btn btn-warning btn-sm editunit" data-toggle="modal"
                         data-target="#modaleditunit"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-primary btn-sm kirimsatusehat" idunit={{ $u->id}} namaunit="{{ $u->nama_unit }}"><i
+                            class="bi bi-send-plus"></i></button>
                 </td>
             </tr>
         @endforeach
     </tbody>
 </table>
-
 <!-- Modal -->
 <div class="modal fade" id="modaleditunit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -78,6 +81,60 @@
             success: function(response) {
                 $('.v_form_edit_unit').html(response);
                 spinner.hide();
+            }
+        });
+    });
+    $(".kirimsatusehat").on('click', function(event) {
+        namaunit = $(this).attr('namaunit')
+        idunit = $(this).attr('idunit')
+        Swal.fire({
+            title: "Anda Yakin ?",
+            text: "Data unit " + namaunit + "akan dikirim ke satu sehat ",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Kirim!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    async: true,
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        namaunit,idunit
+                    },
+                    url: '<?= route('kirimdataunitsatusehat') ?>',
+                    error: function(data) {
+                        spinner.hide()
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ooops....',
+                            text: 'Sepertinya ada masalah......',
+                            footer: ''
+                        })
+                    },
+                    success: function(data) {
+                        spinner.hide()
+                        if (data.kode == 500) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oopss...',
+                                text: data.message,
+                                footer: ''
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'OK',
+                                text: data.message,
+                                footer: ''
+                            })
+                            location.reload()
+                        }
+                    }
+                });
             }
         });
     });

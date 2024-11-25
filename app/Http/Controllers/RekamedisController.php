@@ -116,6 +116,24 @@ class RekamedisController extends Controller
             'pic' => auth()->user()->id
         ];
         Mt_pasien::whereRaw('no_rm = ?', array($dataSet['nomorrm']))->update($data_mt_pasien);
+        if ($dataSet['jeniskelamin'] == 'L') {
+            $jk = 'male';
+        } else {
+            $jk = 'female';
+        }
+        $ihs_mt_pasien = [
+            'nama_pasien' => trim($dataSet['namapasien']),
+            'nik' => trim($dataSet['nomoridentitas']),
+            'jenis_kelamin' => $jk,
+            'tgl_lahir' => trim($dataSet['tgllahir']),
+            'alamat' => trim($dataSet['alamat']),
+            'kota' => trim($dataSet['tempatlahir']),
+            'kode_prov' => trim($dataSet['idprovinsi2']),
+            'kode_kab' => trim($dataSet['idkabupaten2']),
+            'kode_kec' => trim($dataSet['idkecamatan2']),
+            'kode_des' => trim($dataSet['iddesa2']),
+        ];
+        ihs_mt_pasien::whereRaw('no_rm = ?', array($dataSet['nomorrm']))->update($ihs_mt_pasien);
         $data = [
             'kode' => 200,
             'message' => 'sukses',
@@ -160,8 +178,8 @@ class RekamedisController extends Controller
             'kode_penjamin' => 'P01',
             'pic' => auth()->user()->id
         ];
-        $pasien = db::select('select * from mt_pasien where no_rm = ?',[$dataSet['rm']]);
-        $unit = db::select('select * from mt_unit where kode_unit = ?',[$dataSet['idunit']]);
+        $pasien = db::select('select * from mt_pasien where no_rm = ?', [$dataSet['rm']]);
+        $unit = db::select('select * from mt_unit where kode_unit = ?', [$dataSet['idunit']]);
         $ts_kunjungan = TS_kunjungan::create($data_kunjungan);
         $ihs_data_kunjungan = [
             'kode_kunjungan' => $ts_kunjungan->id,
@@ -236,14 +254,16 @@ class RekamedisController extends Controller
     public function cariDiagnosa(Request $request)
     {
         $key = $request['term'];
-        $result = DB::connection('mysql2')->select("select * from mt_icd10 where nama like '%$key%'");
-        if (count($result) > 0) {
-            foreach ($result as $row)
-                $arr_result[] = array(
-                    'label' => $row->nama,
-                    'id' => $row->diag,
-                );
-            echo json_encode($arr_result);
+        if (strlen($key) > 3) {
+            $result = DB::connection('mysql2')->select("select * from mt_icd10 where nama like '%$key%'");
+            if (count($result) > 0) {
+                foreach ($result as $row)
+                    $arr_result[] = array(
+                        'label' => $row->nama,
+                        'id' => $row->diag,
+                    );
+                echo json_encode($arr_result);
+            }
         }
     }
     public function cariUnit(Request $request)
@@ -292,11 +312,10 @@ class RekamedisController extends Controller
         JOIN mt_lokasi_kabupaten_satu_sehat c ON b.parent_code = c.code
         JOIN mt_lokasi_provinsi_satu_sehat d on c.parent_code = d.bps_code
         WHERE b.code = '$kec' and a.name LIKE '%$key%'");
-        // dd($result);
             if (count($result) > 0) {
                 foreach ($result as $row)
                     $arr_result[] = array(
-                        'label' => $row->nama_desa.' | '. $row->nama_kecamatan,
+                        'label' => $row->nama_desa . ' | ' . $row->nama_kecamatan,
                         'kode' => $row->id_desa,
                     );
                 echo json_encode($arr_result);
@@ -382,8 +401,8 @@ class RekamedisController extends Controller
         $des = $pasien[0]->kode_desa;
         $provinsi = DB::select('select * from mt_lokasi_provinces where id = ?', [$prov]);
         $kabupaten = DB::select('select * from mt_lokasi_regencies where id = ?', [$kab]);
-        $kecamatan = DB::select('select * from mt_lokasi_districts where id = ?', [$kec]);
-        $desa = DB::select('select * from mt_lokasi_villages where id = ?', [$des]);
+        $kecamatan = DB::select('select * from mt_lokasi_kecamatan_satu_sehat where code = ?', [$kec]);
+        $desa = DB::select('select * from mt_lokasi_desa_satu_sehat where code = ?', [$des]);
         $date = $this->get_date();
         return view('Rekamedis.form_edit_pasien', compact([
             'pasien',

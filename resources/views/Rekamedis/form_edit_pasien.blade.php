@@ -75,14 +75,14 @@
                     <input type="text" class="form-control" id="kecamatan2" name="kecamatan2"
                         placeholder="pilih kecamatan ..." value="@foreach ($kecamatan as $kec ) {{ $kec->name }}@endforeach">
                     <input readonly type="text"  class="form-control" id="idkecamatan2"
-                        name="idkecamatan2" placeholder="pilih desa ..." value="@foreach ($kecamatan as $kec ) {{ $kec->id }}@endforeach">
+                        name="idkecamatan2" placeholder="pilih desa ..." value="@foreach ($kecamatan as $kec ) {{ $kec->code }}@endforeach">
                 </div>
                 <label for="inputPassword" class="col-sm-1 col-form-label text-right">Desa</label>
                 <div class="col-md-2">
                     <input type="text" class="form-control" id="desa2" name="desa2"
                         placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->name }}@endforeach">
                     <input readonly type="text"  class="form-control" id="iddesa2" name="iddesa2"
-                        placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->id }}@endforeach">
+                        placeholder="pilih desa ..." value="@foreach ($desa as $des ) {{ $des->code }}@endforeach">
                 </div>
             </div>
             <div class="form-group row">

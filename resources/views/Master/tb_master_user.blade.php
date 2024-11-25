@@ -1,5 +1,6 @@
 <table id="tabelmasterunit" class="table table-sm table-bordered table-hover">
     <thead>
+        <th>ID satu sehat</th>
         <th>Nama Lengkap</th>
         <th>Username</th>
         <th>Hak Akses</th>
@@ -10,6 +11,7 @@
     <tbody>
         @foreach ($user as $u)
             <tr>
+                <td>{{ $u->ihs_code }}</td>
                 <td>{{ $u->nama }}</td>
                 <td>{{ $u->username }}</td>
                 <td>

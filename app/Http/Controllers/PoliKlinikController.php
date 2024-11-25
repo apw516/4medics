@@ -127,7 +127,39 @@ class PoliKlinikController extends Controller
                 $array_layanan_obat[] = $dataSet3;
             }
         }
-
+        // if(strlen())
+        if(strlen($dataSet['subject']) < 5){
+            $data = [
+                'kode' => 500,
+                'message' => 'Subject harus diisi !'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if(strlen($dataSet['planning']) < 5){
+            $data = [
+                'kode' => 500,
+                'message' => 'Planning harus diisi !'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if(strlen($dataSet['kodediagnosaprimer']) < 1){
+            $data = [
+                'kode' => 500,
+                'message' => 'pilih diagnosa yang tersedia didropdown !'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if(strlen($dataSet['displaydiagnosaprimer']) < 1){
+            $data = [
+                'kode' => 500,
+                'message' => 'pilih diagnosa yang tersedia didropdown !'
+            ];
+            echo json_encode($data);
+            die;
+        }
         $data_pemeriksaan = [
             'counter' => $dataSet['counter'],
             'kodekunjungan' => $dataSet['kodekunjungan'],
@@ -145,6 +177,8 @@ class PoliKlinikController extends Controller
             'kode_paramedis' => auth()->user()->kode_paramedis,
             'pic' => auth()->user()->id,
             'nama_dokter' => auth()->user()->nama,
+            'diagnosa_primer' => $dataSet['kodediagnosaprimer'],
+            'display_diagnosa_primer' => $dataSet['displaydiagnosaprimer'],
         ];
         $cek = DB::connection('mysql2')->select('select * from erm_assesmen_medis where kodekunjungan = ?', [$dataSet['kodekunjungan']]);
         if (count($cek) > 0) {
@@ -161,8 +195,8 @@ class PoliKlinikController extends Controller
         $ihs_kunjungan = [
             'jam_selesai' => $this->get_time(),
             'keluhan_pasien' =>  $dataSet['subject'],
-            'kode_ihs_dokter' => 'N10000001',
-            'nama_dokter' => 'Voigt',
+            'kode_ihs_dokter' => auth()->user()->ihs_code,
+            'nama_dokter' => auth()->user()->nama,
             'diagnosa_primer' =>$dataSet['kodediagnosaprimer'],
             'display_diagnosa_primer' => $dataSet['displaydiagnosaprimer'],
             'diagnosa_sekunder' =>$dataSet['kodediagnosasekunder'],

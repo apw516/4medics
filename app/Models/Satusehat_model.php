@@ -221,37 +221,34 @@ class Satusehat_model extends Model
             return $response;
         }
     }
-    public function  CreateOrganizationPoli($data, $data_org, $tipe)
+    public function  CreateOrganizationPoli($data)
     {
-        $latitude = $data['posisilatitude'];
-        $longitude = $data['posisilongitude'];
-        $altitude = $data['posisialtitude'];
         $arrayVar = [
             "resourceType" => "Location",
             "identifier" => [
                 [
-                    "system" => "http://sys-ids.kemkes.go.id/location/b162afd3-892d-4e8f-a018-d941317e52b0",
+                    "system" => "http://sys-ids.kemkes.go.id/location/$this->idorg",
                     "value" => "SS-UKP-POLI-ROOM"
                 ]
             ],
             "status" => "active",
-            "name" => "$data[namapoli]",
-            "description" => "$data[deskripsi]",
+            "name" => "$data",
+            "description" => "$data",
             "mode" => "instance",
             "telecom" => [
                 [
                     "system" => "phone",
-                    "value" => "$data_org[no_telp]",
+                    "value" => "-",
                     "use" => "work"
                 ],
                 [
                     "system" => "email",
-                    "value" => "$data_org[email]",
+                    "value" => "-",
                     "use" => "work"
                 ],
                 [
                     "system" => "url",
-                    "value" => "$data_org[website]",
+                    "value" => "-",
                     "use" => "work"
                 ]
             ],
@@ -259,18 +256,18 @@ class Satusehat_model extends Model
                 "coding" => [
                     [
                         "system" => "http://terminology.hl7.org/CodeSystem/location-physical-type",
-                        "code" => "$data[tipe]",
-                        "display" => "$tipe"
+                        "code" => "ro",
+                        "display" => "Room"
                     ]
                 ]
             ],
             "position" => [
-                "longitude" => (float)$longitude,
-                "latitude" => (float)$latitude,
+                "longitude" => 0,
+                "latitude" => 0,
                 "altitude" => 0
             ],
             "managingOrganization" => [
-                "reference" => "Organization/$data[idorganization]"
+                "reference" => "Organization/$this->idorg"
             ]
         ];
         $client = new Client();
@@ -471,6 +468,29 @@ class Satusehat_model extends Model
             return $response;
         }
     }
+    public function searchpatienbynik($ID)
+    {
+        $client = new Client();
+        $url = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/Patient?identifier=https://fhir.kemkes.go.id/id/nik|'.$ID;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => $this->generate_token_satu_sehat(),
+            ]);
+            $response = json_decode($response->getBody());
+            $response = [
+                'code' => 200,
+                'data' => $response,
+            ];
+            return $response;
+        } catch (ClientException $e) {
+            // $response = $e;
+            $response = [
+                'code' => $e->getCode(),
+                'status' => $e->getMessage(),
+            ];
+            return $response;
+        }
+    }
     public function createPatientByNIK($DATA)
     {
         $arrayVar = [
@@ -645,12 +665,19 @@ class Satusehat_model extends Model
                         'http_errors' => false
                     ]);
                     $response = json_decode($response->getBody());
-                    try{
-                        $response = [
-                            'code' => 200,
-                            'data' => $response->data->resourceId,
-                        ];
-                    }catch(RequestException  $e){
+                    try {
+                        if (empty($response->data)) {
+                            $response = [
+                                'code' => 200,
+                                'data' => $response->data->resourceId,
+                            ];
+                        } else {
+                            $response = [
+                                'code' => 500,
+                                'data' => 'ERROR',
+                            ];
+                        }
+                    } catch (RequestException  $e) {
                         $response = [
                             'code' => 500,
                             'data' => 'ERROR',
@@ -684,7 +711,7 @@ class Satusehat_model extends Model
                 "display" => "ambulatory"
             ],
             "subject" => [
-                "reference" => "Patient/$DATA[idsatusehat]",
+                "reference" => "Patient/$DATA[idpasien]",
                 "display" => "$DATA[namapasien]"
             ],
             "participant" => [
@@ -707,7 +734,7 @@ class Satusehat_model extends Model
                 ]
             ],
             "period" => [
-                "start" => "$DATA[tanggal]T$DATA[jam]+00:00"
+                "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00"
             ],
             "location" => [
                 [
@@ -716,7 +743,7 @@ class Satusehat_model extends Model
                         "display" => "$DATA[namapoli]"
                     ],
                     "period" => [
-                        "start" => "$DATA[tanggal]T$DATA[jam]+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00"
                     ],
                     "extension" => [
                         [
@@ -755,7 +782,7 @@ class Satusehat_model extends Model
                 [
                     "status" => "arrived",
                     "period" => [
-                        "start" => "$DATA[tanggal]T$DATA[jam]+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00"
                     ]
                 ]
             ],
@@ -789,7 +816,7 @@ class Satusehat_model extends Model
     {
         $arrayVar = [
             "resourceType" => "Encounter",
-            "id" => "$DATA[registrasi_id]",
+            "id" => "$DATA[id_kunjungan_ihs]",
             "identifier" => [
                 [
                     "system" => "http://sys-ids.kemkes.go.id/encounter/$this->idorg",
@@ -803,7 +830,7 @@ class Satusehat_model extends Model
                 "display" => "ambulatory"
             ],
             "subject" => [
-                "reference" => "Patient/$DATA[id_pasien]",
+                "reference" => "Patient/$DATA[idpasien]",
                 "display" => "$DATA[namapasien]"
             ],
             "participant" => [
@@ -831,11 +858,11 @@ class Satusehat_model extends Model
             "location" => [
                 [
                     "location" => [
-                        "reference" => "Location/$DATA[id_poli]",
-                        "display" => "$DATA[nama_poli]"
+                        "reference" => "Location/$DATA[idpoli]",
+                        "display" => "$DATA[namapoli]"
                     ],
                     "period" => [
-                        "start" => "2023-08-31T00:00:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00"
                     ],
                     "extension" => [
                         [
@@ -874,14 +901,14 @@ class Satusehat_model extends Model
                 [
                     "status" => "arrived",
                     "period" => [
-                        "start" => "2023-08-31T00:00:00+00:00",
-                        "end" => "2023-08-31T01:00:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
+                        "end" => "$DATA[tglmasuk]T$DATA[jam_panggil]+00:00"
                     ]
                 ],
                 [
                     "status" => "in-progress",
                     "period" => [
-                        "start" => "2023-08-31T01:00:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jam_panggil]+00:00"
                     ]
                 ]
             ],
@@ -890,7 +917,7 @@ class Satusehat_model extends Model
             ]
         ];
         $client = new Client();
-        $url = $this->urlpelayanan . 'Encounter/' . $DATA['registrasi_id'];
+        $url = $this->urlpelayanan . 'Encounter/' . $DATA['id_kunjungan_ihs'];
         try {
             $response = $client->request('PUT', $url, [
                 'headers' => $this->generate_token_satu_sehat(),
@@ -913,9 +940,10 @@ class Satusehat_model extends Model
     }
     public function updatePulang($DATA)
     {
+
         $arrayVar = [
             "resourceType" => "Encounter",
-            "id" => "$DATA[idsatusehat_kunjungan]",
+            "id" => "$DATA[id_kunjungan_ihs]",
             "identifier" => [
                 [
                     "system" => "http://sys-ids.kemkes.go.id/encounter/$this->idorg",
@@ -929,7 +957,7 @@ class Satusehat_model extends Model
                 "display" => "ambulatory"
             ],
             "subject" => [
-                "reference" => "Patient/$DATA[idsatusehat]",
+                "reference" => "Patient/$DATA[idpasien]",
                 "display" => "$DATA[namapasien]"
             ],
             "participant" => [
@@ -952,8 +980,8 @@ class Satusehat_model extends Model
                 ]
             ],
             "period" => [
-                "start" => "2023-08-31T00:00:00+00:00",
-                "end" => "2023-08-31T04:10:00+00:00"
+                "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
+                "end" => "$DATA[tglmasuk]T$DATA[jampanggil]+00:00",
             ],
             "location" => [
                 [
@@ -962,8 +990,8 @@ class Satusehat_model extends Model
                         "display" => "$DATA[namapoli]"
                     ],
                     "period" => [
-                        "start" => "2023-08-31T00:00:00+00:00",
-                        "end" => "2023-08-31T02:00:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jampanggil]+00:00",
+                        "end" => "$DATA[tglmasuk]T$DATA[jam_selesai]+00:00"
                     ],
                     "extension" => [
                         [
@@ -1001,8 +1029,8 @@ class Satusehat_model extends Model
             "diagnosis" => [
                 [
                     "condition" => [
-                        "reference" => "Condition/A00.9",
-                        "display" => "CHOLERA, UNSPECIFIED"
+                        "reference" => "Condition/$DATA[ihs_code_diagnosa]",
+                        "display" => "$DATA[diagnosadisplay]"
                     ],
                     "use" => [
                         "coding" => [
@@ -1017,8 +1045,8 @@ class Satusehat_model extends Model
                 ],
                 [
                     "condition" => [
-                        "reference" => "Condition/-",
-                        "display" => "-"
+                        "reference" => "Condition/$DATA[ihs_code_diagnosa]",
+                        "display" => "$DATA[diagnosadisplay]"
                     ],
                     "use" => [
                         "coding" => [
@@ -1036,22 +1064,22 @@ class Satusehat_model extends Model
                 [
                     "status" => "arrived",
                     "period" => [
-                        "start" => "2023-08-31T00:00:00+00:00",
-                        "end" => "2023-08-31T01:00:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
+                        "end" => "$DATA[tglmasuk]T$DATA[jampanggil]+00:00"
                     ]
                 ],
                 [
                     "status" => "in-progress",
                     "period" => [
-                        "start" => "2023-08-31T01:00:00+00:00",
-                        "end" => "2023-08-31T04:05:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jampanggil]+00:00",
+                        "end" => "$DATA[tglmasuk]T$DATA[jam_selesai]+00:00"
                     ]
                 ],
                 [
                     "status" => "finished",
                     "period" => [
-                        "start" => "2023-08-31T04:05:00+00:00",
-                        "end" => "2023-08-31T04:10:00+00:00"
+                        "start" => "$DATA[tglmasuk]T$DATA[jam_selesai]+00:00",
+                        "end" => "$DATA[tglmasuk]T$DATA[jam_selesai]+00:00"
                     ]
                 ]
             ],
@@ -1064,15 +1092,16 @@ class Satusehat_model extends Model
                             "display" => "Home"
                         ]
                     ],
-                    "text" => "Anjuran dokter untuk pulang dan kontrol kembali 1 bulan setelah minum obat"
+                    "text" => "$DATA[rencana]"
                 ]
             ],
             "serviceProvider" => [
                 "reference" => "Organization/$this->idorg"
             ]
         ];
+        // dd($arrayVar);
         $client = new Client();
-        $url = $this->urlpelayanan . 'Encounter/' . $DATA['idsatusehat_kunjungan'];
+        $url = $this->urlpelayanan . 'Encounter/' . $DATA['id_kunjungan_ihs'];
         try {
             $response = $client->request('PUT', $url, [
                 'headers' => $this->generate_token_satu_sehat(),
@@ -1131,10 +1160,10 @@ class Satusehat_model extends Model
                 "display" => "$DATA[namapasien]"
             ],
             "encounter" => [
-                "reference" => "Encounter/$DATA[counterid]"
+                "reference" => "Encounter/$DATA[id_kunjungan_ihs]"
             ],
-            "onsetDateTime" => "2023-02-02T00:00:00+00:00",
-            "recordedDate" => "2023-08-31T01:00:00+00:00",
+            "onsetDateTime" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
+            "recordedDate" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
             "recorder" => [
                 "reference" => "Practitioner/$DATA[iddokter]",
                 "display" => "$DATA[namadokter]"
@@ -1150,6 +1179,70 @@ class Satusehat_model extends Model
         $url = $this->urlpelayanan . 'Condition';
         try {
             $response = $client->request('post', $url, [
+                'headers' => $this->generate_token_satu_sehat(),
+                'json' => $arrayVar
+            ]);
+            $response = json_decode($response->getBody());
+            $response = [
+                'code' => 200,
+                'data' => $response,
+            ];
+            return $response;
+        } catch (ClientException $e) {
+            // $response = $e;
+            $response = [
+                'code' => $e->getCode(),
+                'status' => $e->getMessage(),
+            ];
+            return $response;
+        }
+    }
+    public function diagnosaprimer($DATA) {
+        $arrayVar = [
+            "resourceType" => "Condition",
+            "clinicalStatus" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                        "code" => "active",
+                        "display" => "Active"
+                    ]
+                ]
+                    ],
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/condition-category",
+                            "code" => "encounter-diagnosis",
+                            "display" => "Encounter Diagnosis"
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://hl7.org/fhir/sid/icd-10",
+                        "code" => "$DATA[diagnosa]",
+                        "display" => "$DATA[diagnosadisplay]"
+                    ]
+                ]
+                    ],
+            "subject" => [
+                "reference" => "Patient/$DATA[idpasien]",
+                "display" => "$DATA[namapasien]"
+            ],
+            "encounter" => [
+                "reference" => "Encounter/$DATA[id_kunjungan_ihs]"
+            ],
+            "onsetDateTime" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00",
+            "recordedDate" => "$DATA[tglmasuk]T$DATA[jammasuk]+00:00"
+        ];
+        $client = new Client();
+        $url = $this->urlpelayanan . 'Condition';
+        try {
+            $response = $client->request('POST', $url, [
                 'headers' => $this->generate_token_satu_sehat(),
                 'json' => $arrayVar
             ]);

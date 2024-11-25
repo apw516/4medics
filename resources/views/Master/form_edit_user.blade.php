@@ -5,6 +5,11 @@
             value="{{ $user[0]->kode_paramedis }}">
     </div>
     <div class="form-group">
+        <label for="exampleFormControlInput1">ID Satu Sehat</label>
+        <input type="text" class="form-control" id="ihs_code" name="ihs_code" placeholder="name@example.com"
+            value="{{ $user[0]->ihs_code }}">
+    </div>
+    <div class="form-group">
         <label for="exampleFormControlInput1">Nama</label>
         <input type="text" class="form-control" id="namalengkap" name="namalengkap" placeholder="name@example.com"
             value="{{ $user[0]->nama }}">

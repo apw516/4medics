@@ -163,11 +163,7 @@
                                                                     class="col-sm-2 col-form-label">Subject ( S
                                                                     )</label>
                                                                 <div class="col-sm-10">
-                                                                    <textarea class="form-control" name="subject" id="subject" rows="3" placeholder="Subject Pemeriksaan ...">
-@if (count($cekassesmen) > 0)
-{{ $cekassesmen[0]->subject }}
-@endif
-</textarea>
+                                                                    <textarea class="form-control" name="subject" id="subject" rows="3" placeholder="Subject Pemeriksaan ...">@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->subject) }}@endif</textarea>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -179,11 +175,7 @@
                                                                     class="col-sm-2 col-form-label">Object ( O
                                                                     )</label>
                                                                 <div class="col-sm-10">
-                                                                    <textarea class="form-control" name="object" id="object" rows="3" placeholder="Object Pemeriksaan ...">
-@if (count($cekassesmen) > 0)
-{{ $cekassesmen[0]->object }}
-@endif
-</textarea>
+                                                                    <textarea class="form-control" name="object" id="object" rows="3" placeholder="Object Pemeriksaan ...">@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->object) }}@endif</textarea>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -196,22 +188,36 @@
                                                                     )</label>
                                                                 <div class="col-sm-10">
                                                                     <textarea class="form-control" name="assesment" id="assesment" rows="3"
-                                                                        placeholder="Assesment Pemeriksaan ...">
-@if (count($cekassesmen) > 0)
-{{ $cekassesmen[0]->assesment }}
-@endif
-</textarea>
-<div class="form-group mt-3">
-    <label for="exampleInputEmail1">Diagnosa Primer</label>
-    <input type="email" class="form-control" id="displaydiagnosaprimer" name="displaydiagnosaprimer" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->display_diagnosa_primer }} @endif">
-    <input type="email" class="form-control" id="kodediagnosaprimer" name="kodediagnosaprimer" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->diagnosa_primer }} @endif">
-  </div>
-<div class="form-group mt-3">
-    <label for="exampleInputEmail1">Diagnosa Sekunder</label>
-    <input type="email" class="form-control" id="displaydiagnosasekunder" name="displaydiagnosasekunder" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->display_diagnosa_sekunder }} @endif">
-        <input type="email" class="form-control" id="kodediagnosasekunder" name="kodediagnosasekunder" aria-describedby="emailHelp" value="@if(count($cekdiagnosa) > 0) {{ $cekdiagnosa[0]->diagnosa_sekunder }} @endif">
+                                                                        placeholder="Assesment Pemeriksaan ...">@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->assesment) }}@endif</textarea>
+                                                                    <div class="form-group mt-3">
+                                                                        <label for="exampleInputEmail1">Diagnosa
+                                                                            Primer</label>
+                                                                        <input type="email" class="form-control"
+                                                                            id="displaydiagnosaprimer"
+                                                                            name="displaydiagnosaprimer"
+                                                                            aria-describedby="emailHelp"
+                                                                            value="@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->diagnosa_primer) }}@endif">
+                                                                        <input type="email" class="form-control"
+                                                                            id="kodediagnosaprimer"
+                                                                            name="kodediagnosaprimer"
+                                                                            aria-describedby="emailHelp"
+                                                                            value="@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->display_diagnosa_primer) }}@endif">
+                                                                    </div>
+                                                                    <div hidden class="form-group mt-3">
+                                                                        <label for="exampleInputEmail1">Diagnosa
+                                                                            Sekunder</label>
+                                                                        <input type="email" class="form-control"
+                                                                            id="displaydiagnosasekunder"
+                                                                            name="displaydiagnosasekunder"
+                                                                            aria-describedby="emailHelp"
+                                                                            value="@if (count($cekdiagnosa) > 0){{ trim($cekdiagnosa[0]->display_diagnosa_sekunder) }} @endif">
+                                                                        <input type="email" class="form-control"
+                                                                            id="kodediagnosasekunder"
+                                                                            name="kodediagnosasekunder"
+                                                                            aria-describedby="emailHelp"
+                                                                            value="@if (count($cekdiagnosa) > 0) {{ trim($cekdiagnosa[0]->diagnosa_sekunder) }} @endif">
 
-  </div>
+                                                                    </div>
 
                                                                 </div>
                                                             </div>
@@ -225,11 +231,7 @@
                                                                     )</label>
                                                                 <div class="col-sm-10">
                                                                     <textarea class="form-control" name="planning" id="planning" rows="3"
-                                                                        placeholder="Planning Pemeriksaan ...">
-@if (count($cekassesmen) > 0)
-{{ $cekassesmen[0]->planning }}
-@endif
-</textarea>
+                                                                        placeholder="Planning Pemeriksaan ...">@if (count($cekassesmen) > 0){{ trim($cekassesmen[0]->planning) }}@endif</textarea>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -273,11 +275,13 @@
                                                                 </div>
                                                                 <div class="card-footer">
                                                                     <button class="btn btn-info" data-toggle="modal"
-                                                                        data-target="#modalriwayatobat" onclick="tampilriwayatobat()"><i
+                                                                        data-target="#modalriwayatobat"
+                                                                        onclick="tampilriwayatobat()"><i
                                                                             class="bi bi-list-check mr-1 ml-1"></i>
                                                                         Riwayat Obat hari ini</button>
                                                                     <button class="btn btn-info" data-toggle="modal"
-                                                                        data-target="#modalriwayatresep" onclick="tampilriwayatresep()"><i
+                                                                        data-target="#modalriwayatresep"
+                                                                        onclick="tampilriwayatresep()"><i
                                                                             class="bi bi-list-check mr-1 ml-1"></i>
                                                                         Riwayat Resep Pasien</button>
                                                                 </div>
@@ -457,6 +461,7 @@
             }
         });
     }
+
     function tampilriwayatobat() {
         kode_kunjungan = $('#kodekunjungan').val()
         spinner = $('#loader')
@@ -478,6 +483,7 @@
             }
         });
     }
+
     function tampilriwayatresep() {
         kode_kunjungan = $('#kodekunjungan').val()
         spinner = $('#loader')
@@ -539,6 +545,3 @@
             }
         });
     });
-
-
-

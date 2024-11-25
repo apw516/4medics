@@ -98,6 +98,7 @@ Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'
 Route::get('/masterpasien', [MasterController::class, 'indexMasterPasien'])->name('masterpasien');
 Route::get('/masterunit', [MasterController::class, 'indexMasterUnit'])->name('masterunit');
 Route::get('/masteruser', [MasterController::class, 'indexMasterUser'])->name('masteruser');
+Route::get('/masterkunjungan', [MasterController::class, 'indexMasterKunjungan'])->name('masterkunjungan');
 Route::post('/ambil_master_pasien', [MasterController::class, 'ambilMasterPasien'])->name('ambil_master_pasien');
 Route::get('/masterpegawai', [MasterController::class, 'indexMasterPegawai'])->name('masterpegawai');
 Route::post('/ambilmasterunit', [MasterController::class, 'ambilMaterUnit'])->name('ambilmasterunit');
@@ -113,4 +114,9 @@ Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->nam
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');
 Route::post('/kirimdatapasiensatusehat', [MasterController::class, 'kirimPasienSatuSehat'])->name('kirimdatapasiensatusehat');
+Route::post('/cari_kunjungan_pasien', [MasterController::class, 'ambilDataKunjunganIHS'])->name('cari_kunjungan_pasien');
+Route::post('/kirimdatakunjungansatusehat', [MasterController::class, 'kirimKunjunganSatuSehat'])->name('kirimdatakunjungansatusehat');
+Route::post('/kirimdataunitsatusehat', [MasterController::class, 'kirimdataunitsatusehat'])->name('kirimdataunitsatusehat');
+Route::post('/caripasienihs', [MasterController::class, 'cariPasienSatusehat'])->name('caripasienihs');
+Route::post('/editpasienihs', [MasterController::class, 'editPasienIHS'])->name('editpasienihs');
 

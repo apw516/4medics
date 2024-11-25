@@ -30,6 +30,7 @@
             <thead>
                 <th>Nama Barang</th>
                 <th>Harga Beli</th>
+                <th>Harga Jual</th>
                 <th>Expired Data</th>
                 <th>Stok</th>
                 <th>Tanggal entry</th>
@@ -38,7 +39,8 @@
                 @foreach ($stok_sediaan as $D)
                     <tr>
                         <td>{{ $D->nama_barang}}</td>
-                        <td>{{ $D->harga_beli}}</td>
+                        <td> Rp. {{ number_format($D->harga_beli, 2) }} </td>
+                        <td>Rp. {{ number_format($D->harga_jual, 2) }}</td>
                         <td>{{ $D->ed}}</td>
                         <td>{{ $D->stok}}</td>
                         <td>{{ $D->tgl_entry}}</td>

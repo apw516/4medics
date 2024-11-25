@@ -110,6 +110,13 @@
                         <p class="text">Master Pasien</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('masterkunjungan') }}"
+                        class="nav-link @if ($menu == 'masterkunjungan') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Kunjungan</p>
+                    </a>
+                </li>
                 <li class="nav-header">Akun</li>
                 <li class="nav-item">
                     <a href="{{ route('infoakun') }}" class="nav-link @if ($menu == 'infoakun') active @endif">
