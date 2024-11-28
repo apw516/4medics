@@ -186,8 +186,6 @@ class RekamedisController extends Controller
             'no_rm' => $dataSet['rm'],
             'kode_ihs_pasien' => 0,
             'nama_pasien' => $pasien[0]->nama_px,
-            'kode_ihs_dokter' => 'N10000001',
-            'nama_dokter' => 'Voigt',
             'tgl_masuk' => $dataSet['tanggalkunjungan'],
             'jam_masuk' => $this->get_time(),
             'kode_ihs_poli' => $unit[0]->loc_ihs_kode,

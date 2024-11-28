@@ -665,6 +665,7 @@ class Satusehat_model extends Model
                         'http_errors' => false
                     ]);
                     $response = json_decode($response->getBody());
+                    dd($response);
                     try {
                         if (empty($response->data)) {
                             $response = [
