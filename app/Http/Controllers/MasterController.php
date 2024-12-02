@@ -542,7 +542,6 @@ class MasterController extends Controller
        $ktp = $request->nomorktp;
        $v = new Satusehat_model();
        $p = $v->searchpatienbynik($ktp);
-       dd($p);
        if($p['code'] == 200){
             $id = $p['data']->entry[0]->resource->id;
        }else{
