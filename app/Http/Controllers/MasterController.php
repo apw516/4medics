@@ -23,6 +23,13 @@ class MasterController extends Controller
             'menu'
         ]));
     }
+    public function indexMasterLokasi()
+    {
+        $menu = "masterlokasi";
+        return view('Master.index_master_lokasi', compact([
+            'menu'
+        ]));
+    }
     public function indexMasterKunjungan()
     {
         $menu = "masterkunjungan";
@@ -501,8 +508,8 @@ class MasterController extends Controller
         $namaunit = $request->namaunit;
         $v = new Satusehat_model();
         $p = $v->CreateOrganizationPoli($namaunit);
-        try{
-            if($p['code'] == 200){
+        try {
+            if ($p['code'] == 200) {
                 $id = $p['data']->id;
                 $dataunit = [
                     'loc_ihs_kode' => $id
@@ -513,14 +520,14 @@ class MasterController extends Controller
                     'message' => 'Data berhasil dikirim'
                 ];
                 echo json_encode($data);
-            }else{
+            } else {
                 $data = [
                     'kode' => 500,
                     'message' => 'Gagal kirim data ...!'
                 ];
                 echo json_encode($data);
             }
-        }catch(\exception $e){
+        } catch (\exception $e) {
             $data = [
                 'kode' => 500,
                 'message' => $e->getMessage()
@@ -538,20 +545,23 @@ class MasterController extends Controller
             'data'
         ]));
     }
-    public function cariPasienSatusehat(Request $request){
-       $ktp = $request->nomorktp;
-       $v = new Satusehat_model();
-       $p = $v->searchpatienbynik($ktp);
-       if($p['code'] == 200){
+    public function cariPasienSatusehat(Request $request)
+    {
+        $ktp = $request->nomorktp;
+        $v = new Satusehat_model();
+        $p = $v->searchpatienbynik($ktp);
+        if ($p['code'] == 200) {
             $id = $p['data']->entry[0]->resource->id;
-       }else{
+        } else {
             $id = 0;
-       }
-        return view('Master.data_pasien_ihs_by_nik',compact([
-            'ktp','id'
+        }
+        return view('Master.data_pasien_ihs_by_nik', compact([
+            'ktp',
+            'id'
         ]));
     }
-    public function editPasienIHS(Request $request){
+    public function editPasienIHS(Request $request)
+    {
         $data = json_decode($_POST['data'], true);
         foreach ($data as $nama) {
             $index =  $nama['name'];
@@ -568,5 +578,51 @@ class MasterController extends Controller
             'message' => 'sukses'
         ];
         echo json_encode($data);
+    }
+    public function cariKabupatenByProv(Request $request)
+    {
+        // dd($request);
+
+        $kodeprov = $request['kodeprovinsi2'];
+        $namakabupaten = $request['namakabupaten'];
+        // dd($kec);
+        if (strlen($namakabupaten) > 2) {
+            $result = DB::select("SELECT a.code as idkabupaten
+                    ,a.name as nama_kabupaten
+                    FROM mt_lokasi_kabupaten_satu_sehat a
+                    JOIN mt_lokasi_provinsi_satu_sehat b ON a.`parent_code` = b.`code`
+                    WHERE b.code = '$kodeprov' and a.name LIKE '%$namakabupaten%'");
+            if (count($result) > 0) {
+                foreach ($result as $row)
+                    $arr_result[] = array(
+                        'label' => $row->nama_kabupaten,
+                        'kode' => $row->idkabupaten,
+                    );
+                echo json_encode($arr_result);
+            }
+        }
+    }
+    public function carikecamatanbykab(Request $request)
+    {
+        // dd($request);
+
+        $kodekabupaten = $request['kodekabupaten2'];
+        $namakecamatan = $request['namakecamatan'];
+        // dd($kec);
+        if (strlen($namakecamatan) > 2) {
+            $result = DB::select("SELECT a.code as idkecamatan
+                    ,a.name as nama_kecamatan
+                    FROM mt_lokasi_kecamatan_satu_sehat a
+                    JOIN mt_lokasi_kabupaten_satu_sehat b ON a.`parent_code` = b.`code`
+                    WHERE a.parent_code = '$kodekabupaten' and a.name LIKE '%$namakecamatan%'");
+            if (count($result) > 0) {
+                foreach ($result as $row)
+                    $arr_result[] = array(
+                        'label' => $row->nama_kecamatan,
+                        'kode' => $row->idkecamatan,
+                    );
+                echo json_encode($arr_result);
+            }
+        }
     }
 }

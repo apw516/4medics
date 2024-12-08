@@ -111,6 +111,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('masterlokasi') }}"
+                        class="nav-link @if ($menu == 'masterlokasi') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Lokasi</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('masterkunjungan') }}"
                         class="nav-link @if ($menu == 'masterkunjungan') active @endif">
                         <i class="nav-icon far bi bi-clipboard2-data"></i>

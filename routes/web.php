@@ -95,6 +95,9 @@ Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'
 
 
 //data master
+Route::get('/carikabupaten_byprov', [MasterController::class, 'cariKabupatenByProv'])->name('carikabupaten_byprov');
+Route::get('/carikecamatan_bykab', [MasterController::class, 'carikecamatanbykab'])->name('carikecamatan_bykab');
+Route::get('/masterlokasi', [MasterController::class, 'indexMasterLokasi'])->name('masterlokasi');
 Route::get('/masterpasien', [MasterController::class, 'indexMasterPasien'])->name('masterpasien');
 Route::get('/masterunit', [MasterController::class, 'indexMasterUnit'])->name('masterunit');
 Route::get('/masteruser', [MasterController::class, 'indexMasterUser'])->name('masteruser');
@@ -119,4 +122,5 @@ Route::post('/kirimdatakunjungansatusehat', [MasterController::class, 'kirimKunj
 Route::post('/kirimdataunitsatusehat', [MasterController::class, 'kirimdataunitsatusehat'])->name('kirimdataunitsatusehat');
 Route::post('/caripasienihs', [MasterController::class, 'cariPasienSatusehat'])->name('caripasienihs');
 Route::post('/editpasienihs', [MasterController::class, 'editPasienIHS'])->name('editpasienihs');
+Route::post('/getmasterdesa', [MasterController::class, 'getmasterdesa'])->name('getmasterdesa');
 
