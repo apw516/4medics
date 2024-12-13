@@ -23,6 +23,61 @@
         </td>
     </tr>
     <tr>
+        <td width="60%">
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Frekuensi nafas</label>
+                <div class="col-sm-5">
+                    {{ $as->frekuensi_nafas }} x/menit
+                </div>
+            </div>
+        </td>
+        <td>
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-4 col-form-label">tinggi_badan</label>
+                <div class="col-sm-5">
+                    {{ $as->tinggi_badan }} cm
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td width="60%">
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Berat badan</label>
+                <div class="col-sm-5">
+                    {{ $as->berat_badan }} kg
+                </div>
+            </div>
+        </td>
+        <td>
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-4 col-form-label">usia</label>
+                <div class="col-sm-5">
+                    {{ $as->usia_pasien }} th
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td width="60%">
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Tekanan
+                    Darah</label>
+                <div class="col-sm-5">
+                    {{ $as->tekanan_darah }} mm Hg
+                </div>
+            </div>
+        </td>
+        <td>
+            <div class="form-group row mt-4">
+                <label for="inputPassword" class="col-sm-4 col-form-label">Suhu Tubuh</label>
+                <div class="col-sm-5">
+                    {{ $as->suhu_tubuh }} °C
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
         <td class="font-italic" colspan="2">
             Subject ( S ) : {{ trim($as->subject) }}
         </td>
@@ -45,6 +100,32 @@
     </tr>
 </table>
 @endforeach
+<div class="card">
+    <div class="card-header">Data tindakan / tarif</div>
+    <div class="card-body">
+        <table id="tabelriwayatobat" class="table table-sm table-bordered text-xs table-hover">
+            <thead>
+                <th>Tanggal order</th>
+                <th>Nama Obat</th>
+                <th>QTY</th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+                @foreach ($TINDAKAN as $d )
+                    <tr>
+                        <tr>
+                            <td>{{ $d->tgl_entry}}</td>
+                            <td>{{ $d->keterangan01}}</td>
+                            {{-- <td>{{ $d->dosis}}</td> --}}
+                            <td>{{ $d->jumlah_layanan}}</td>
+                            <td>{{ $d->status_layanan_detail}}</td>
+                        </tr>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="card">
     <div class="card-header">Order Faramsi</div>
     <div class="card-body">

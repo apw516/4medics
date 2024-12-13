@@ -10,6 +10,8 @@ use App\Models\bridging_ris;
 use App\Models\farmasidetailorder;
 use App\Models\farmasiheaderorder;
 use App\Models\ihs_ts_kunjungan;
+use App\Models\layanan_detail;
+use App\Models\layanan_header;
 use App\Models\TS_kunjungan;
 
 class PoliKlinikController extends Controller
@@ -36,7 +38,7 @@ class PoliKlinikController extends Controller
     {
         $awal = $request->awal;
         $akhir = $request->akhir;
-        $data = DB::connection('mysql2')->select('select counter, fc_nama_px(no_rm) as nama_pasien,no_rm,kode_kunjungan,tgl_masuk,fc_nama_unit1(kode_unit) as nama_unit,fc_NAMA_PARAMEDIS1(kode_paramedis) as nama_dokter,fc_alamat(no_rm) as alamat from ts_kunjungan where date(tgl_masuk) between ? and ? and kode_unit = ?', [$awal, $akhir, auth()->user()->unit]);
+        $data = DB::connection('mysql2')->select('select b.id as idassesmen, a.counter, fc_nama_px(a.no_rm) as nama_pasien,a.no_rm,kode_kunjungan,a.tgl_masuk,fc_nama_unit1(a.kode_unit) as nama_unit,fc_NAMA_PARAMEDIS1(a.kode_paramedis) as nama_dokter,fc_alamat(a.no_rm) as alamat from ts_kunjungan a left outer join erm_assesmen_medis b on a.kode_kunjungan = b.kodekunjungan where date(a.tgl_masuk) between ? and ? and a.kode_unit = ?', [$awal, $akhir, auth()->user()->unit]);
         return view('Poliklinik.tabel_pasien_poli', compact([
             'data'
         ]));
@@ -55,12 +57,15 @@ class PoliKlinikController extends Controller
         $kode_kunjungan = $request->kode_kunjungan;
         $data = DB::connection('mysql2')->select('select * from erm_assesmen_medis where kodekunjungan = ?', [$kode_kunjungan]);
         $dataobat = db::select('select * from farmasi_header_order a inner join farmasi_detail_order b on a.id = b.id_header where a.kode_kunjungan = ?', [$kode_kunjungan]);
-        $datalayananobat = db::select('select * from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where b.status_layanan_detail = ? and a.kode_unit = ? and a.kode_kunjungan = ?', ['OPN', '4008', $kode_kunjungan]);
+
+        $datalayananobat = db::select('select * from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where b.status_layanan_detail != ? and a.kode_unit = ? and a.kode_kunjungan = ?', ['CCL', '4008', $kode_kunjungan]);
+
+        $TINDAKAN = db::select('select * from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where b.status_layanan_detail != ? and a.kode_unit != ? and a.kode_kunjungan = ?', ['CCL', '4008', $kode_kunjungan]);
         // dd($data);
         return view('Poliklinik.datapemeriksaan', compact([
             'data',
             'dataobat',
-            'datalayananobat'
+            'datalayananobat','TINDAKAN'
         ]));
     }
     public function cari_obat_erm(Request $request)
@@ -91,29 +96,74 @@ class PoliKlinikController extends Controller
             ];
             ihs_ts_kunjungan::whereRaw('kode_kunjungan = ?', array($kodekunjungan))->update($dataihskunjungan);
         }
+        $mt_tarif = db::select('select *,a.id as idtarif from mt_tarif_baru a left outer join mt_unit b on a.kode_unit = b.kode_unit where a.status = 1');
         return view('Poliklinik.index_erm', compact([
             'mt_pasien',
             'kunjungan',
             'cekassesmen',
-            'rm','cekdiagnosa'
+            'rm','cekdiagnosa',
+            'mt_tarif'
         ]));
     }
     public function ambilRiwayatPemeriksaan(Request $request)
     {
         $rm = $request->rm;
-        $assesmen = DB::connection('mysql2')->select('select *,fc_nama_unit1(kode_unit) as nama_unit from erm_assesmen_medis where no_rm = ?', [$rm]);
+        $assesmen = DB::connection('mysql2')->select('select *,fc_nama_unit1(kode_unit) as nama_unit from erm_assesmen_medis where no_rm = ? order by counter desc', [$rm]);
         $dt2 = DB::connection('mysql2')->select('select * from ts_kunjungan a
         left outer join ts_layanan_header b on a.kode_kunjungan = b.kode_kunjungan
         left outer join ts_layanan_detail c on b.id = c.row_id_header
-        where a.no_rm = ? and b.kode_unit = ?',[$rm,'4008']);
+        where a.no_rm = ? and b.kode_unit = ? and c.status_layanan_detail = ?',[$rm,'4008','CLS']);
+        $dt3 = DB::connection('mysql2')->select('select * from ts_kunjungan a
+        left outer join ts_layanan_header b on a.kode_kunjungan = b.kode_kunjungan
+        left outer join ts_layanan_detail c on b.id = c.row_id_header
+        where a.no_rm = ? and b.kode_unit != ? and c.status_layanan_detail = ?',[$rm,'4008','CLS']);
         return view('Poliklinik.riwayatpemeriksaan', compact([
-            'assesmen','dt2'
+            'assesmen','dt2','dt3'
         ]));
+    }
+    public function createLayananheader($unit)
+    {
+        $q = DB::connection('mysql2')->select('SELECT id,kode_layanan_header,RIGHT(kode_layanan_header,6) AS kd_max  FROM ts_layanan_header
+        WHERE DATE(tgl_entry) = CURDATE() AND kode_unit = ?
+        ORDER BY id DESC
+        LIMIT 1',[$unit]);
+        $mt_unit = db::select('select * from mt_unit where kode_unit = ?',[$unit]);
+        $pref = $mt_unit[0]->prefix_unit;
+        $kd = "";
+        if (count($q) > 0) {
+            foreach ($q as $k) {
+                $tmp = ((int) $k->kd_max) + 1;
+                $kd = sprintf("%06s", $tmp);
+            }
+        } else {
+            $kd = "000001";
+        }
+        date_default_timezone_set('Asia/Jakarta');
+        return $pref . date('ymd') . $kd;
+    }
+    public function createLayanandetail()
+    {
+        $q = DB::connection('mysql2')->select('SELECT id,id_layanan_detail,RIGHT(id_layanan_detail,6) AS kd_max  FROM ts_layanan_detail
+        WHERE DATE(tgl_layanan_detail) = CURDATE()
+        ORDER BY id DESC
+        LIMIT 1');
+        $kd = "";
+        if (count($q) > 0) {
+            foreach ($q as $k) {
+                $tmp = ((int) $k->kd_max) + 1;
+                $kd = sprintf("%06s", $tmp);
+            }
+        } else {
+            $kd = "000001";
+        }
+        date_default_timezone_set('Asia/Jakarta');
+        return 'DET' . date('ymd') . $kd;
     }
     public function simpanPemeriksaanDokter(Request $request)
     {
         $data = json_decode($_POST['data'], true);
         $data3 = json_decode($_POST['data2'], true);
+        $data4 = json_decode($_POST['data4'], true);
         foreach ($data as $nama) {
             $index =  $nama['name'];
             $value =  $nama['value'];
@@ -127,6 +177,7 @@ class PoliKlinikController extends Controller
                 $array_layanan_obat[] = $dataSet3;
             }
         }
+
         // if(strlen())
         if(strlen($dataSet['subject']) < 5){
             $data = [
@@ -170,6 +221,10 @@ class PoliKlinikController extends Controller
             'tgl_entry' => $dataSet['tglmasuk'],
             'tekanan_darah' => $dataSet['tekanandarah'],
             'suhu_tubuh' => $dataSet['suhutubuh'],
+            'frekuensi_nafas' => $dataSet['frekuensinafas'],
+            'tinggi_badan' => $dataSet['tinggibadan'],
+            'berat_badan' => $dataSet['beratbadan'],
+            'usia_pasien' => $dataSet['usia'],
             'subject' => $dataSet['subject'],
             'object' => $dataSet['object'],
             'assesment' => $dataSet['assesment'],
@@ -185,6 +240,52 @@ class PoliKlinikController extends Controller
             erm_assesmen_dokter::whereRaw('kodekunjungan = ?', array($dataSet['kodekunjungan']))->update($data_pemeriksaan);
         } else {
             erm_assesmen_dokter::create($data_pemeriksaan);
+        }
+        if(count($data4) > 0){
+            foreach ($data4 as $nama4) {
+                $index4 = $nama4['name'];
+                $value4 = $nama4['value'];
+                $dataSet4[$index4] = $value4;
+                if ($index4 == 'qty') {
+                    $arraytindakan[] = $dataSet4;
+                }
+            }
+            $kode_layanan_header =  $this->createLayananheader(auth()->user()->unit);
+            $ts_kunjungan = db::select('select * from ts_kunjungan where kode_kunjungan = ?',[$dataSet['kodekunjungan']]);
+            $datalayananheader = $data_layanan_header = [
+                'kode_layanan_header' => $kode_layanan_header,
+                'tgl_entry' => $this->get_now(),
+                'kode_kunjungan' => $dataSet['kodekunjungan'],
+                'kode_unit' => auth()->user()->unit,
+                'kode_tipe_transaksi' => '1',
+                'pic' => auth()->user()->id,
+                'status_layanan' => 1,
+                'dok_kirim' =>auth()->user()->kode_paramedis,
+                'kode_unit' => $ts_kunjungan[0]->kode_unit,
+            ];
+            $layanan_header = layanan_header::create($data_layanan_header);
+            $gt_header = 0;
+            foreach ($arraytindakan as $at) {
+                $id_detail = $this->createLayanandetail();
+                $data_detail = [
+                    'id_layanan_detail' =>$id_detail,
+                    'kode_layanan_header' => $kode_layanan_header,
+                    'kode_tarif_detail' => $at['idtarif'],
+                    'total_tarif' => $at['tarif'],
+                    'jumlah_layanan' => $at['qty'],
+                    'total_layanan' => $at['qty'] * $at['tarif'],
+                    'grantotal_layanan' => $at['qty'] * $at['tarif'],
+                    'tgl_layanan_detail' => $this->get_now(),
+                    'status_layanan_detail' => 'OPN',
+                    'tagihan_pribadi' => $at['qty'] * $at['tarif'],
+                    'row_id_header' => $layanan_header->id,
+                    'keterangan01' => $at['namatarif'],
+                ];
+                layanan_detail::create($data_detail);
+                $gt = $at['qty'] * $at['tarif'];
+                $gt_header = $gt_header + $gt;
+            }
+            layanan_header::whereRaw('id = ?', $layanan_header->id)->update(['total_layanan' => $gt_header, 'tagihan_pribadi' => $gt_header]);
         }
         $kodekunjungan = $dataSet['kodekunjungan'];
         TS_kunjungan::whereRaw('kode_kunjungan = ?', array($dataSet['kodekunjungan']))->update(['kode_paramedis' => auth()->user()->kode_paramedis]);
@@ -280,12 +381,58 @@ class PoliKlinikController extends Controller
         ];
         echo json_encode($data);
     }
+    public function batalTindakan(Request $request)
+    {
+        $iddetail = $request->iddetail;
+        $idheader = $request->idheader;
+        $detail = db::select('select * from ts_layanan_detail where id = ?',[$iddetail]);
+        if($detail[0]->status_layanan_detail == 'CCL'){
+            $data = [
+                'kode' => 500,
+                'message' => 'Gagal, Layanan sudah diretur sebelumnya'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $detail_new = [
+            'jumlah_retur' => $detail[0]->jumlah_layanan,
+            'status_layanan_detail' => 'CCL',
+            'grantotal_layanan' => 0,
+            'tagihan_pribadi' => 0,
+        ];
+        layanan_detail::whereRaw('id = ?', $iddetail)->update($detail_new);
+        $header = db::select('select * from ts_layanan_header where id = ?',[$idheader]);
+        $detail2 = db::select('select * from ts_layanan_detail where row_id_header = ? and status_layanan_detail = ?',[$idheader,'OPN']);
+        $total_layanan_header = $header[0]->total_layanan;
+        $new_total_layanan_header = $total_layanan_header - $detail[0]->grantotal_layanan;
+        if($new_total_layanan_header < 0){
+            $new_total_layanan_header = 0;
+        }
+        if(count($detail2) > 0){
+            $status_header = 1;
+            $status_retur = 'OPN';
+        }else{
+            $status_header = 3;
+            $status_retur = 'CLS';
+        }
+        $data_header = [
+            'status_layanan' => $status_header,
+            'status_retur' => $status_retur,
+            'total_layanan' => $new_total_layanan_header,
+            'tagihan_pribadi' => $new_total_layanan_header
+        ];
+        layanan_header::whereRaw('id = ?',$idheader)->update($data_header);
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
+    }
     public function ambil_riwayat_obat(request $request)
     {
         $kode_kunjungan = $request->kode_kunjungan;
         $data = db::select('select *,a.id as idheader,b.id as iddetail from farmasi_header_order a inner join farmasi_detail_order b on a.id = b.id_header where a.kode_kunjungan = ?', [$kode_kunjungan]);
-
-        $datalayananobat = db::select('select * from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where b.status_layanan_detail = ? and a.kode_unit = ? and a.kode_kunjungan = ?', ['OPN', '4008', $kode_kunjungan]);
+        $datalayananobat = db::select('select * from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where b.status_layanan_detail != ? and a.kode_unit = ? and a.kode_kunjungan = ?', ['CCL', '4008', $kode_kunjungan]);
 
         return view('Poliklinik.riwayat_obat_terkirim', compact([
             'data',
@@ -302,6 +449,14 @@ class PoliKlinikController extends Controller
         return view('Poliklinik.riwayat_resep', compact([
             'data_resep',
             'data_resep2'
+        ]));
+    }
+    public function ambil_riwayat_tindakan(request $request)
+    {
+        $kode_kunjungan = $request->kode_kunjungan;
+        $riwayat = db::select('select *,a.id as idheader ,b.id as iddetail from ts_layanan_header a inner join ts_layanan_detail b on a.id = b.row_id_header where kode_kunjungan = ? and kode_tarif_detail != ? and b.status_layanan_detail != ?',[$kode_kunjungan,'NULL','CCL']);
+        return view('Poliklinik.riwayat_tindakan', compact([
+            'riwayat'
         ]));
     }
     public function testapi()

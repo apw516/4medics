@@ -74,14 +74,43 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('farmasiriwayatpemakaianobat') }}"
+                            class="nav-link @if ($menu == 'riwayat pemakaian obat') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Riwayat Pemakaian Obat</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('farmasimasterbarang') }}"
                             class="nav-link @if ($menu == 'masterbarang') active @endif">
                             <i class="nav-icon far bi bi-clipboard2-data"></i>
                             <p class="text">Master Barang</p>
                         </a>
                     </li>
+                    <li class="nav-header">Kasir</li>
+                    <li class="nav-item">
+                        <a href="{{ route('indexdatakasir') }}"
+                            class="nav-link @if ($menu == 'datapasienkasir') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Data Pasien</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('riwayatkasir') }}"
+                            class="nav-link @if ($menu == 'Riwayat Transaksi Kasir') active @endif">
+                            <i class="nav-icon far bi bi-clipboard2-data"></i>
+                            <p class="text">Riwayat Transaksi Kasir</p>
+                        </a>
+                    </li>
                 @endif
                 <li class="nav-header">MASTER DATA</li>
+                <li class="nav-item">
+                    <a href="{{ route('mastertarif') }}"
+                        class="nav-link @if ($menu == 'mastertarif') active @endif">
+                        <i class="nav-icon far bi bi-clipboard2-data"></i>
+                        <p class="text">Master Tarif</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('masterunit') }}"
                         class="nav-link @if ($menu == 'masterunit') active @endif">

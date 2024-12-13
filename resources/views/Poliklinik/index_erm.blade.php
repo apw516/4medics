@@ -128,7 +128,7 @@
                                                                             value="@if (count($cekassesmen) > 0) {{ $cekassesmen[0]->tekanan_darah }} @endif">
                                                                         <div class="input-group-append">
                                                                             <span class="input-group-text"
-                                                                                id="basic-addon2">mm Hg </span>
+                                                                                id="basic-addon2">mmHg </span>
                                                                         </div>
                                                                     </div>
 
@@ -150,6 +150,92 @@
                                                                         <div class="input-group-append">
                                                                             <span class="input-group-text"
                                                                                 id="basic-addon2">°C</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group row mt-4">
+                                                                <label for="inputPassword"
+                                                                    class="col-sm-2 col-form-label">Frekuensi nafas</label>
+                                                                <div class="col-sm-5">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Masukan tekanan darah pasien ..."
+                                                                            aria-label="Recipient's username"
+                                                                            aria-describedby="basic-addon2"
+                                                                            name="frekuensinafas" id="frekuensinafas"
+                                                                            value="@if (count($cekassesmen) > 0) {{ $cekassesmen[0]->frekuensi_nafas}} @endif">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text"
+                                                                                id="basic-addon2">x/menit</span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group row mt-4">
+                                                                <label for="inputPassword"
+                                                                    class="col-sm-2 col-form-label">Tinggi badan</label>
+                                                                <div class="col-sm-5">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Masukan suhu tubuh pasien ..."
+                                                                            aria-label="Recipient's username"
+                                                                            aria-describedby="basic-addon2"
+                                                                            name="tinggibadan" id="tinggibadan"
+                                                                            value="@if (count($cekassesmen) > 0) {{ $cekassesmen[0]->tinggi_badan }} @endif">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text"
+                                                                                id="basic-addon2">cm</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group row mt-4">
+                                                                <label for="inputPassword"
+                                                                    class="col-sm-2 col-form-label">Berat badan</label>
+                                                                <div class="col-sm-5">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Masukan tekanan darah pasien ..."
+                                                                            aria-label="Recipient's username"
+                                                                            aria-describedby="basic-addon2"
+                                                                            name="beratbadan" id="beratbadan"
+                                                                            value="@if (count($cekassesmen) > 0) {{ $cekassesmen[0]->berat_badan }} @endif">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text"
+                                                                                id="basic-addon2">kg</span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group row mt-4">
+                                                                <label for="inputPassword"
+                                                                    class="col-sm-2 col-form-label">Usia</label>
+                                                                <div class="col-sm-5">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Masukan suhu tubuh pasien ..."
+                                                                            aria-label="Recipient's username"
+                                                                            aria-describedby="basic-addon2"
+                                                                            name="usia" id="usia"
+                                                                            value="@if (count($cekassesmen) > 0) {{ $cekassesmen[0]->usia_pasien }} @endif">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text"
+                                                                                id="basic-addon2">tahun</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -239,6 +325,55 @@
                                                 </table>
                                             </form>
                                             <div class="card">
+                                                <div class="card-header bg-secondary">Input tarif tindakan & Laboratorium</div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-5">
+                                                            <table id="tabelpilihtarif" class="table table-sm table-hover table-bordered">
+                                                                <thead>
+                                                                    <th>Nama Tarif</th>
+                                                                    <th>Jenis</th>
+                                                                    <th>Unit</th>
+                                                                    <th>Tarif</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach ($mt_tarif as $rt )
+                                                                        <tr class="pilihtarif" idtarif="{{ $rt->idtarif}}" namatarif="{{ $rt->nama_tarif}}" jenistarif="{{ $rt->jenis_tarif}}" tarif="{{ $rt->tarif }}" kodeunit="{{ $rt->kode_unit }}">
+                                                                            <td>{{ $rt->nama_tarif}}</td>
+                                                                            <td>{{ $rt->jenis_tarif}}</td>
+                                                                            <td>{{ $rt->nama_unit}}</td>
+                                                                            <td>{{ $rt->tarif}}</td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            <div class="card">
+                                                                <div class="card-header bg-warning">Tarif tindakan & laboratorium yang dipilih
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <form action="" method="post"
+                                                                        class="form_layanan_tarif">
+                                                                        <div class="input_layanan_tarif">
+                                                                            <div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <div class="card-footer">
+                                                                    <button class="btn btn-info" data-toggle="modal"
+                                                                        data-target="#modalriwayattindakan"
+                                                                        onclick="tampilriwayattindakan()"><i
+                                                                            class="bi bi-list-check mr-1 ml-1"></i>
+                                                                        Riwayat tindakan hari ini</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
                                                 <div class="card-header bg-secondary">Order Farmasi</div>
                                                 <div class="card-body">
                                                     <div class="row">
@@ -317,6 +452,28 @@
     </div>
 </div>
 <!-- Modal -->
+<div class="modal fade" id="modalriwayattindakan" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Riwayat Tindakan hari ini ...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="v_r_tindakan">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
 <div class="modal fade" id="modalriwayatobat" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -378,6 +535,7 @@
         spinner.show();
         var data = $('.formpemeriksaan').serializeArray();
         var data2 = $('.form_layanan').serializeArray();
+        var data4 = $('.form_layanan_tarif').serializeArray();
         $.ajax({
             async: true,
             type: 'post',
@@ -386,6 +544,7 @@
                 _token: "{{ csrf_token() }}",
                 data: JSON.stringify(data),
                 data2: JSON.stringify(data2),
+                data4: JSON.stringify(data4)
             },
             url: '<?= route('simpanpemeriksaan') ?>',
             error: function(data) {
@@ -462,6 +621,27 @@
         });
     }
 
+    function tampilriwayattindakan() {
+        kode_kunjungan = $('#kodekunjungan').val()
+        spinner = $('#loader')
+        spinner.show();
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode_kunjungan
+            },
+            url: '<?= route('ambil_riwayat_tindakan') ?>',
+            error: function(response) {
+                spinner.hide()
+                alert('error')
+            },
+            success: function(response) {
+                spinner.hide()
+                $('.v_r_tindakan').html(response);
+            }
+        });
+    }
     function tampilriwayatobat() {
         kode_kunjungan = $('#kodekunjungan').val()
         spinner = $('#loader')
@@ -545,3 +725,31 @@
             }
         });
     });
+
+    $(function() {
+        $("#tabelpilihtarif").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": true,
+            "pageLength": 5,
+            "searching": true
+        })
+    });
+    $(".pilihtarif").on('click', function(event) {
+           idtarif = $(this).attr('idtarif')
+           nama = $(this).attr('namatarif')
+           jenistarif = $(this).attr('jenistarif')
+           tarif = $(this).attr('tarif')
+           kodeunit = $(this).attr('kodeunit')
+           kodeunit = $(this).attr('kodeunit')
+           var wrapper = $(".input_layanan_tarif")
+           $(wrapper).append(
+               '<div class="form-row text-xs"><div class="form-group col-md-3"><label for="">Nama Tarif</label><input readonly type="" class="form-control form-control-sm text-xs edit_field" id="" name="namatarif" value="' + nama +'"><input hidden readonly type="" class="form-control form-control-sm" id="" name="idtarif" value="' +idtarif+'"></div><div class="form-group col-md-2"><label for="inputPassword4">Jenis tarif</label><input readonly type="" class="form-control form-control-sm" id="" name="jenistarif" value="' +jenistarif +'"></div><div class="form-group col-md-2"><label for="inputPassword4">Tarif</label><input readonly type="" class="form-control form-control-sm" id="" name="tarif" value="' +tarif +'"></div><div class="form-group col-md-1"><label for="inputPassword4">Qty</label><input type="" class="form-control form-control-sm" id="" name="qty" value="1"></div><i class="bi bi-x-square remove_field form-group col-md-1 text-danger" kode2=""></i></div>'
+           );
+           $(wrapper).on("click", ".remove_field", function(e) { //user click on remove
+               e.preventDefault();
+               $(this).parent('div').remove();
+               x--;
+           })
+       });
+

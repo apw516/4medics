@@ -11,18 +11,18 @@ use GuzzleHttp\Exception\RequestException;
 
 class Satusehat_model extends Model
 {
-    // public $urlloginpelayanan = 'https://api-satusehat-stg.dto.kemkes.go.id/oauth2/v1/';
-    public $urlloginpelayanan = 'https://api-satusehat.kemkes.go.id/oauth2/v1/';
-    // public $urlpelayanan = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/';
-    public $urlpelayanan = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/';
+    public $urlloginpelayanan = 'https://api-satusehat-stg.dto.kemkes.go.id/oauth2/v1/';
+    // public $urlloginpelayanan = 'https://api-satusehat.kemkes.go.id/oauth2/v1/';
+    public $urlpelayanan = 'https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1/';
+    // public $urlpelayanan = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/';
     public $urlauthmaster = 'https://api-satusehat.kemkes.go.id/oauth2/v1/';
     public $urlmaster = 'https://api-satusehat-stg.dto.kemkes.go.id/masterdata/v1/';
-    public $idorg = '100158569';
-    // public $idorg = 'b162afd3-892d-4e8f-a018-d941317e52b0';
-    public $client_id = 'oqkA3u1y5Bz7vwdjHZL7GWztPtwmCPg1Cbof6zRkHtSDvTN2';
-    // public $client_id = 'bgVWzHZKRvTPpJZWGlxHEQX1K7g0aoPGQmxmWsegn889dTjF';
-    public $client_secret = 'kJbCI2FlY60IqSsDov7EeQyZAbRKWBfGNg38qI9WhtvtfU8aoN0fhe3XHAXq3pfG';
-    // public $client_secret = 'enO5BG6zTdcSOnlT68Cx1FMSjoSeGiJZrcOkh2Iqb6ylHZjbeUvFJFY1JmzWgJQT';
+    // public $idorg = '100158569';
+    public $idorg = 'b162afd3-892d-4e8f-a018-d941317e52b0';
+    // public $client_id = 'oqkA3u1y5Bz7vwdjHZL7GWztPtwmCPg1Cbof6zRkHtSDvTN2';
+    public $client_id = 'bgVWzHZKRvTPpJZWGlxHEQX1K7g0aoPGQmxmWsegn889dTjF';
+    // public $client_secret = 'kJbCI2FlY60IqSsDov7EeQyZAbRKWBfGNg38qI9WhtvtfU8aoN0fhe3XHAXq3pfG';
+    public $client_secret = 'enO5BG6zTdcSOnlT68Cx1FMSjoSeGiJZrcOkh2Iqb6ylHZjbeUvFJFY1JmzWgJQT';
     public static function header()
     {
         $response = array(

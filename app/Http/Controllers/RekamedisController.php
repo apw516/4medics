@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\erm_assesmen_dokter;
 use App\Models\ihs_mt_pasien;
 use App\Models\ihs_ts_kunjungan;
 use App\Models\Log_mt_pasien;
@@ -192,6 +193,20 @@ class RekamedisController extends Controller
             'nama_poli' => $unit[0]->nama_unit,
         ];
         $ihs_ts_kunjungan_save = ihs_ts_kunjungan::create($ihs_data_kunjungan);
+        $data_pemeriksaan = [
+            'counter' => $counter,
+            'kodekunjungan' => $ts_kunjungan->id,
+            'no_rm' => $dataSet['rm'],
+            'kode_unit' => $dataSet['idunit'],
+            'tekanan_darah' => $dataSet['tekanandarah'],
+            'frekuensi_nafas' => $dataSet['frekuensinafas'],
+            'suhu_tubuh' => $dataSet['suhutubuh'],
+            'tinggi_badan' => $dataSet['tinggibadan'],
+            'berat_badan' => $dataSet['beratbadan'],
+            'usia_pasien' => $dataSet['usiapasien'],
+            'subject' => $dataSet['keluhanutama'],
+        ];
+        erm_assesmen_dokter::create($data_pemeriksaan);
         $data = [
             'kode' => 200,
             'message' => 'sukses'
@@ -296,7 +311,7 @@ class RekamedisController extends Controller
         $key = $request['desa'];
         $kec = $request['id'];
         // dd($kec);
-        if (strlen($key) > 4) {
+        if (strlen($key) > 2) {
         $result = DB::select("SELECT a.code as id_desa
         ,a.name as nama_desa
         ,b.bps_code as id_kecamatan
@@ -381,7 +396,8 @@ class RekamedisController extends Controller
     {
         $rm = $request->rm;
         $pasien = DB::connection('mysql2')->select('select *,date(tgl_lahir) as tgl_lahir,fc_alamat(no_rm) as alamat from mt_pasien where no_rm = ?', [$rm]);
-        $kunjungan = DB::connection('mysql2')->select('select counter,tgl_masuk,fc_nama_unit1(kode_unit) as nama_unit,status_kunjungan,fc_NAMA_PARAMEDIS1(kode_paramedis) as nama_dokter from ts_kunjungan where no_rm = ? order by counter desc', [$rm]);
+        $kunjungan = DB::connection('mysql2')->select('select kode_kunjungan, counter,tgl_masuk,fc_nama_unit1(kode_unit) as nama_unit,status_kunjungan,fc_NAMA_PARAMEDIS1(kode_paramedis) as nama_dokter from ts_kunjungan where no_rm = ? order by counter desc', [$rm]);
+        // dd($kunjungan);
         $date = $this->get_date();
         return view('Rekamedis.form_pendaftaran', compact([
             'pasien',

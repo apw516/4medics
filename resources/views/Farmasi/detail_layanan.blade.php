@@ -43,7 +43,7 @@
                         <td>{{ $d->dosis }}</td>
                         <td>{{ $d->jumlah_layanan }}</td>
                         <td>
-                            <button class="btn btn-danger btn-sm returobat" iddetail="{{ $d->iddetail }}" idheader="{{ $d->idheader }}"><i
+                            <button class="btn btn-danger btn-sm returobat" @if($d->status_layanan_detail == 'CLS') disabled @endif iddetail="{{ $d->iddetail }}" idheader="{{ $d->idheader }}"><i
                                 class="bi bi-trash3"></i></button>
                         </td>
                     </tr>

@@ -44,6 +44,42 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td width="60%">
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Frekuensi nafas</label>
+                                        <div class="col-sm-5">
+                                            {{ $as->frekuensi_nafas }} x/menit
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-4 col-form-label">tinggi_badan</label>
+                                        <div class="col-sm-5">
+                                            {{ $as->tinggi_badan }} cm
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="60%">
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Berat badan</label>
+                                        <div class="col-sm-5">
+                                            {{ $as->berat_badan }} kg
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group row mt-4">
+                                        <label for="inputPassword" class="col-sm-4 col-form-label">usia</label>
+                                        <div class="col-sm-5">
+                                            {{ $as->usia_pasien }} th
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td class="font-italic" colspan="2">
                                     Subject ( S ) : {{ trim($as->subject) }}
                                 </td>
@@ -66,6 +102,25 @@
                                 </td>
                             </tr>
                         </table>
+                        <div class="card">
+                            <div class="card-header">Riwayat Tindakan / Tarif</div>
+                            <div class="card-body">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <th>Nama Tindakan / Tarif</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($dt3 as $d4)
+                                            @if($d4->kode_kunjungan == $as->kodekunjungan )
+                                            <tr>
+                                                <td>{{ $d4->keterangan01}}</td>
+                                            </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-header">Riwayat Obat</div>
                             <div class="card-body">

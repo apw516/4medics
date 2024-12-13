@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FarmasiController;
+use App\Http\Controllers\KasirController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PoliKlinikController;
 use App\Http\Controllers\RekamedisController;
@@ -69,7 +70,9 @@ Route::post('/ambil_data_pemeriksaan_pasien', [PoliKlinikController::class, 'amb
 Route::post('/cari_obat_erm', [PoliKlinikController::class, 'cari_obat_erm'])->name('cari_obat_erm');
 Route::post('/ambil_riwayat_obat', [PoliKlinikController::class, 'ambil_riwayat_obat'])->name('ambil_riwayat_obat');
 Route::post('/ambil_riwayat_resep', [PoliKlinikController::class, 'ambil_riwayat_resep'])->name('ambil_riwayat_resep');
+Route::post('/ambil_riwayat_tindakan', [PoliKlinikController::class, 'ambil_riwayat_tindakan'])->name('ambil_riwayat_tindakan');
 Route::post('/batalorderresep', [PoliKlinikController::class, 'batalOrderResep'])->name('batalorderresep');
+Route::post('/bataltindakan', [PoliKlinikController::class, 'batalTindakan'])->name('bataltindakan');
 Route::post('/ambil_detail_resep', [PoliKlinikController::class, 'ambil_detail_resep'])->name('ambil_detail_resep');
 // Route::get('/testa', [PoliKlinikController::class, 'testapi'])->name('test');
 
@@ -86,12 +89,24 @@ Route::post('/ambilformaddstok', [FarmasiController::class, 'ambilformaddstok'])
 Route::post('/liatstokobat', [FarmasiController::class, 'liatstokobat'])->name('liatstokobat');
 Route::post('/formeditobat', [FarmasiController::class, 'formeditobat'])->name('formeditobat');
 Route::post('/cari_order_resep', [FarmasiController::class, 'cari_order_resep'])->name('cari_order_resep');
+Route::post('/cari_riwayat_pemakaianobat', [FarmasiController::class, 'cari_riwayat_pemakaianobat'])->name('cari_riwayat_pemakaianobat');
 Route::post('/ambil_detail_orderan', [FarmasiController::class, 'ambilDetailOrderan'])->name('ambil_detail_orderan');
 Route::post('/ambil_detail_layanan', [FarmasiController::class, 'ambilDetailLayanan'])->name('ambil_detail_layanan');
 Route::post('/cari_obat_farmasi', [FarmasiController::class, 'cariObatFarmasi'])->name('cari_obat_farmasi');
 Route::post('/hitungorderanfarmasi', [FarmasiController::class, 'hitungOrderanFarmasi'])->name('hitungorderanfarmasi');
 Route::post('/simpanorderan', [FarmasiController::class, 'simpanLayananResep'])->name('simpanorderan');
 Route::post('/batallayananresep', [FarmasiController::class, 'batalLayananResep'])->name('batallayananresep');
+Route::post('/cekorder', [FarmasiController::class, 'cekorder'])->name('cekorder');
+Route::get('/farmasiriwayatpemakaianobat', [FarmasiController::class, 'RiwayatPemakaianObat'])->name('farmasiriwayatpemakaianobat');
+
+//kasir
+Route::get('/indexdatakasir', [KasirController::class, 'Index'])->name('indexdatakasir');
+Route::post('/caridatapasienkasir', [KasirController::class, 'cariDataPasienKasir'])->name('caridatapasienkasir');
+Route::post('/ambildeatailtagihan', [KasirController::class, 'detailTagihan'])->name('ambildeatailtagihan');
+Route::post('/bayartagihan', [KasirController::class, 'bayarTagihan'])->name('bayartagihan');
+Route::post('/detailsudahdibayar', [KasirController::class, 'detailTerbayar'])->name('detailsudahdibayar');
+Route::get('/riwayatkasir', [KasirController::class, 'riwayatkasir'])->name('riwayatkasir');
+Route::post('/cari_riwayat_kasir', [KasirController::class, 'cari_riwayat_kasir'])->name('cari_riwayat_kasir');
 
 
 //data master
@@ -102,18 +117,23 @@ Route::get('/masterpasien', [MasterController::class, 'indexMasterPasien'])->nam
 Route::get('/masterunit', [MasterController::class, 'indexMasterUnit'])->name('masterunit');
 Route::get('/masteruser', [MasterController::class, 'indexMasterUser'])->name('masteruser');
 Route::get('/masterkunjungan', [MasterController::class, 'indexMasterKunjungan'])->name('masterkunjungan');
+Route::get('/mastertarif', [MasterController::class, 'indeMasterTarif'])->name('mastertarif');
 Route::post('/ambil_master_pasien', [MasterController::class, 'ambilMasterPasien'])->name('ambil_master_pasien');
 Route::get('/masterpegawai', [MasterController::class, 'indexMasterPegawai'])->name('masterpegawai');
 Route::post('/ambilmasterunit', [MasterController::class, 'ambilMaterUnit'])->name('ambilmasterunit');
+Route::post('/ambilmastertarif', [MasterController::class, 'ambilMaterTarif'])->name('ambilmastertarif');
 Route::post('/ambilmasteruser', [MasterController::class, 'ambilMaterUser'])->name('ambilmasteruser');
 Route::post('/ambilmasterpergawai', [MasterController::class, 'ambilMaterPegawai'])->name('ambilmasterpergawai');
 Route::post('/ambilberkaserm', [MasterController::class, 'ambilBerkasErm'])->name('ambilberkaserm');
 Route::post('/simpanunitbaru', [MasterController::class, 'simpanUnitBaru'])->name('simpanunitbaru');
 Route::post('/simpanpegawaibaru', [MasterController::class, 'simpanPegawaiBaru'])->name('simpanpegawaibaru');
+Route::post('/simpantarifbaru', [MasterController::class, 'simpanTarifBaru'])->name('simpantarifbaru');
 Route::post('/ambil_detail_unit', [MasterController::class, 'ambilDetailUnit'])->name('ambil_detail_unit');
 Route::post('/ambil_detail_user', [MasterController::class, 'ambilDetailUser'])->name('ambil_detail_user');
 Route::post('/ambil_detail_pegawai', [MasterController::class, 'ambilDetailPegawai'])->name('ambil_detail_pegawai');
+Route::post('/ambil_detail_tarif', [MasterController::class, 'ambilDetailTarif'])->name('ambil_detail_tarif');
 Route::post('/simpanupdate', [MasterController::class, 'simpanUpdateUnit'])->name('simpanupdate');
+Route::post('/simpanupdatetarif', [MasterController::class, 'simpanUpdateTarif'])->name('simpanupdatetarif');
 Route::post('/simpanupdateuser', [MasterController::class, 'simpanUpdateUser'])->name('simpanupdateuser');
 Route::post('/simpanupdatepegawai', [MasterController::class, 'simpanUpdatePegawai'])->name('simpanupdatepegawai');
 Route::post('/kirimdatapasiensatusehat', [MasterController::class, 'kirimPasienSatuSehat'])->name('kirimdatapasiensatusehat');

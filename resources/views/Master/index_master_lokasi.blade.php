@@ -170,7 +170,9 @@
             });
         })
         function getmasterdesa(){
-            $kecamatan = $('#kodekecamatan1').val()
+            kecamatan = $('#kodekecamatan1').val()
+            spinner = $('#loader')
+            spinner.show();
             $.ajax({
                 async: true,
                 type: 'post',

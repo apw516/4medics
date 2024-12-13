@@ -15,6 +15,20 @@ use Carbon\Carbon;
 
 class FarmasiController extends Controller
 {
+    public function cekorder()
+    {
+        $date = $this->get_date();
+        $data  = db::select('select * from farmasi_header_order where date(tgl_entry) between ? and ? and status = ?', [$date, $date, 1]);
+        return view('farmasi.cekorder',compact(['data']));
+    }
+    public function RiwayatPemakaianObat()
+    {
+        $menu = 'riwayat pemakaian obat';
+        $date = $this->get_date();
+        return view('Farmasi.indexriwayatobat', compact([
+            'menu','date'
+        ]));
+    }
     public function farmasimasterbarang()
     {
         $menu = 'masterbarang';
@@ -74,6 +88,15 @@ class FarmasiController extends Controller
         $data  = db::select('select * from farmasi_header_order where date(tgl_entry) between ? and ? and status != ?', [$awal, $akhir, 3]);
         return view('Farmasi.tabel_orderan_resep', compact([
             'data'
+        ]));
+    }
+    public function cari_riwayat_pemakaianobat(Request $request)
+    {
+        $awal = $request->awal;
+        $akhir = $request->akhir;
+        $data  = db::select('select *,a.tgl_entry as tgl_layanan,fc_alamat(c.no_rm) as alamat_pasien from ts_layanan_header a inner join ts_kunjungan b on a.kode_kunjungan = b.kode_kunjungan inner join mt_pasien c on b.no_rm = c.no_rm inner join ts_layanan_detail d on a.id = d.row_id_header where date(a.tgl_entry) between ? and ? and a.status_layanan != ? and a.kode_unit = ?', [$awal, $akhir, 3,'4008']);
+        return view('Farmasi.tabel_riwayat_pemakaian_obat', compact([
+            'data','awal','akhir'
         ]));
     }
     public function cariObatFarmasi(Request $request)

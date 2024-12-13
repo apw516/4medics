@@ -20,7 +20,7 @@
                     @if ($d->status == 1)
                         Belum dilayani
                     @elseif ($d->status == 2)
-                        Selesai
+                        Sudah dilayani
                     @elseif ($d->status == 3)
                         Batal
                     @endif

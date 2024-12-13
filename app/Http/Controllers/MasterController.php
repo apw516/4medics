@@ -7,7 +7,9 @@ use App\Models\ihs_mt_pasien;
 use App\Models\ihs_status_encounter;
 use App\Models\master_paramedis;
 use App\Models\master_unit;
+use App\Models\mt_lokasi_desa_satu_sehat;
 use App\Models\Satusehat_model;
+use App\Models\master_tarif;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -154,6 +156,49 @@ class MasterController extends Controller
         ];
         echo json_encode($data);
     }
+    public function simpanUpdateTarif(Request $request)
+    {
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $DATA = [
+            'nama_tarif' => $dataSet['namatarif'],
+            'tarif' => $dataSet['tarif'],
+            'jenis_tarif' => $dataSet['jenistarif'],
+            'kode_unit' => $dataSet['unittarif'],
+            'status' => $dataSet['status'],
+        ];
+        master_tarif::whereRaw('id = ?', array($dataSet['idtarif']))->update($DATA);
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
+    }
+    public function simpanTarifBaru(Request $request)
+    {
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $DATA = [
+            'nama_tarif' => $dataSet['namatarif'],
+            'tarif' => $dataSet['tarif'],
+            'jenis_tarif' => $dataSet['jenistarif'],
+            'kode_unit' => $dataSet['unittarif'],
+        ];
+        master_tarif::create($DATA);
+        $data = [
+            'kode' => 200,
+            'message' => 'sukses'
+        ];
+        echo json_encode($data);
+    }
     public function simpanUpdateUnit(Request $request)
     {
         $data = json_decode($_POST['data'], true);
@@ -242,6 +287,16 @@ class MasterController extends Controller
         $pegawai = db::select('select * from mt_paramedis where ID = ?', [$id]);
         return view('Master.form_edit_pegawai', compact([
             'pegawai',
+            'mt_unit'
+        ]));
+    }
+    public function ambilDetailTarif(request $request)
+    {
+        $id = $request->idtarif;
+        $mt_unit = db::select('select * from mt_unit');
+        $mt_tarif = db::select('select * from mt_tarif_baru where id = ?', [$id]);
+        return view('Master.form_edit_tarif', compact([
+            'mt_tarif',
             'mt_unit'
         ]));
     }
@@ -624,5 +679,66 @@ class MasterController extends Controller
                 echo json_encode($arr_result);
             }
         }
+    }
+    public function indeMasterTarif()
+    {
+        $menu = "mastertarif";
+        $mt_tarif = db::select('select * from mt_tarif_baru');
+        $mt_unit = db::select('select * from mt_unit');
+        return view('Master.index_master_tarif', compact([
+            'menu',
+            'mt_tarif','mt_unit'
+        ]));
+    }
+    public function ambilMaterTarif()
+    {
+        $tarif = db::select('select *,a.id as idtarif from mt_tarif_baru a left outer join mt_unit b on a.kode_unit = b.kode_unit');
+        return view('Master.tb_master_Tarif', compact([
+            'tarif'
+        ]));
+    }
+    public function getmasterdesa(request $request)
+    {
+        $id = $request->kecamatan;
+        $v = new Satusehat_model();
+        $p = $v->get_desa($id);
+        if ($p->status == 200) {
+            $arr = $p->data;
+            // dd($arr);
+            foreach ($arr as $a) {
+                $code = $a->code;
+                $cek = db::select('select count(code) as jlh from mt_lokasi_desa_satu_sehat where code = ?', [$code]);
+                if ($cek[0]->jlh == 0) {
+                    $datadesa = [
+                        'code' => $a->code,
+                        'parent_code' => $a->parent_code,
+                        'bps_code' => $a->bps_code,
+                        'name' => $a->name
+                    ];
+                    mt_lokasi_desa_satu_sehat::create($datadesa);
+                }
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($data);
+            die;
+        } else {
+            $id = 0;
+            $data = [
+                'kode' => 500,
+                'message' => 'error'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $id = 0;
+        $data = [
+            'kode' => 500,
+            'message' => 'error'
+        ];
+        echo json_encode($data);
+        die;
     }
 }

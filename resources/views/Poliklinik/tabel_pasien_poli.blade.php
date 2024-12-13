@@ -8,8 +8,9 @@
                 <th>No RM</th>
                 <th>Nama Pasien</th>
                 <th>Alamat</th>
-                <th>Unit Tujuan</th>
+                <th hidden>Unit Tujuan</th>
                 <th>Dokter Pemeriksa</th>
+                <th>Status</th>
                 <th>Action</th>
             </thead>
             <tbody>
@@ -20,8 +21,9 @@
                         <td>{{ $d->no_rm }}</td>
                         <td>{{ $d->nama_pasien }}</td>
                         <td>{{ $d->alamat }}</td>
-                        <td>{{ $d->nama_unit }}</td>
+                        <td hidden>{{ $d->nama_unit }}</td>
                         <td>{{ $d->nama_dokter }}</td>
+                        <td>@if($d->nama_dokter == NULL)Belum diperiksa @else Selesai @endif</td>
                         <td><button class="btn btn-success btn-sm pilihpasien" kode_kunjungan={{ $d->kode_kunjungan }}><i
                                     class="bi bi-journal-plus r-2"></i></button></td>
                     </tr>

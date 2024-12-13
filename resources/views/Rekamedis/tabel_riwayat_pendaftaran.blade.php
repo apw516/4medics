@@ -32,7 +32,8 @@
                                 Batal
                             @endif
                         </td>
-                        <td><button class="btn btn-warning btn-sm editkunjunganbtn"
+                        <td>
+                            <button class="btn btn-warning btn-sm editkunjunganbtn"
                                 kodekunjungan="{{ $r->kode_kunjungan }}" data-toggle="modal"
                                 data-target="#modaleditkunjungan"><i class="bi bi-pencil-square"></i></button>
                                 <button kode_kunjungan="{{ $r->kode_kunjungan }}" class="btn btn-info btn-sm pilihpasien" data-toggle="modal" data-target="#modalresume"><i

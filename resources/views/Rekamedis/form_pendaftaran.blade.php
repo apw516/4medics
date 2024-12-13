@@ -50,15 +50,28 @@
                                 <th>Nama Unit</th>
                                 <th>Dokter</th>
                                 <th>Status</th>
+                                <th>Hasil Pemeriksaan</th>
                             </thead>
                             <tbody>
-                                @foreach ($kunjungan as $k )
+                                @foreach ($kunjungan as $k)
                                     <tr>
-                                        <td class="text-center">{{ $k->counter}}</td>
-                                        <td>{{ $k->tgl_masuk}}</td>
-                                        <td>{{ $k->nama_unit}}</td>
-                                        <td>{{ $k->nama_dokter}}</td>
-                                        <td>@if($k->status_kunjungan == 1) Aktif @elseif($k->status_kunjungan == 2) Selesai @else Batal @endif</td>
+                                        <td class="text-center">{{ $k->counter }}</td>
+                                        <td>{{ $k->tgl_masuk }}</td>
+                                        <td>{{ $k->nama_unit }}</td>
+                                        <td>{{ $k->nama_dokter }}</td>
+                                        <td>
+                                            @if ($k->status_kunjungan == 1)
+                                                Aktif
+                                            @elseif($k->status_kunjungan == 2)
+                                                Selesai
+                                            @else
+                                                Batal
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button kode_kunjungan="{{ $k->kode_kunjungan }}" class="btn btn-info btn-sm pilihkunjungan" data-toggle="modal" data-target="#modalresume2"><i
+                                                class="bi bi-info-circle"></i></button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -82,6 +95,93 @@
                                 value="{{ $pasien[0]->no_rm }}">
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-header bg-warning">Pemeriksaan Tanda Tanda Vital</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Tekanan Darah</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="tekanandarah">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">mmHg</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Frekunesi Nafas</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="frekuensinafas">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">x/menit</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Suhu tubuh</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="suhutubuh">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">°C</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Tinggi badan</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="tinggibadan">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">Cm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Berat badan</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="beratbadan">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">Kg</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Usia pasien</label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder=""
+                                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="usiapasien">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">tahun</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Keluhan Pasien</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="keluhanutama"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="card-footer">
@@ -93,6 +193,27 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="modalresume2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Data Pemeriksaan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="v_data_pemeriksaan">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(function() {
         $("#tabelriwayatkunjungan").DataTable({
@@ -100,13 +221,16 @@
             "lengthChange": false,
             "autoWidth": true,
             "pageLength": 3,
+            "ordering": false,
             "searching": true
         })
     });
+
     function kembali() {
         $(".v_kedua").attr('hidden', true);
         $(".v_utama").removeAttr('hidden', true);
     }
+
     function simpanpendaftaran() {
         spinner = $('#loader')
         spinner.show();
@@ -159,6 +283,23 @@
             select: function(event, ui) {
                 $('[id="unittujuan"]').val(ui.item.label);
                 $('[id="idunit"]').val(ui.item.id);
+            }
+        });
+    });
+    $(".pilihkunjungan").on('click', function(event) {
+        kode_kunjungan = $(this).attr('kode_kunjungan')
+        spinner = $('#loader')
+        spinner.show();
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode_kunjungan
+            },
+            url: '<?= route('ambil_data_pemeriksaan_pasien') ?>',
+            success: function(response) {
+                $('.v_data_pemeriksaan').html(response);
+                spinner.hide();
             }
         });
     });
