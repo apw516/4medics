@@ -10,6 +10,8 @@ use App\Models\master_unit;
 use App\Models\mt_lokasi_desa_satu_sehat;
 use App\Models\Satusehat_model;
 use App\Models\master_tarif;
+use App\Models\mt_lokasi_kabupaten_satu_sehat;
+use App\Models\mt_lokasi_kecamatan_satu_sehat;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -716,6 +718,93 @@ class MasterController extends Controller
                         'name' => $a->name
                     ];
                     mt_lokasi_desa_satu_sehat::create($datadesa);
+                }
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($data);
+            die;
+        } else {
+            $id = 0;
+            $data = [
+                'kode' => 500,
+                'message' => 'error'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $id = 0;
+        $data = [
+            'kode' => 500,
+            'message' => 'error'
+        ];
+        echo json_encode($data);
+        die;
+    }
+    public function getmasterkecamatan(request $request)
+    {
+        $id = $request->kabupaten;
+        $v = new Satusehat_model();
+        $p = $v->get_kecamatan($id);
+        if ($p->status == 200) {
+            $arr = $p->data;
+            // dd($arr);
+            foreach ($arr as $a) {
+                $code = $a->code;
+                $cek = db::select('select count(code) as jlh from mt_lokasi_kecamatan_satu_sehat where code = ?', [$code]);
+                if ($cek[0]->jlh == 0) {
+                    $datakecamatan = [
+                        'code' => $a->code,
+                        'parent_code' => $a->parent_code,
+                        'bps_code' => $a->bps_code,
+                        'name' => $a->name
+                    ];
+                    mt_lokasi_kecamatan_satu_sehat::create($datakecamatan);
+                }
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($data);
+            die;
+        } else {
+            $id = 0;
+            $data = [
+                'kode' => 500,
+                'message' => 'error'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        $id = 0;
+        $data = [
+            'kode' => 500,
+            'message' => 'error'
+        ];
+        echo json_encode($data);
+        die;
+    }
+    public function getmasterkab(request $request)
+    {
+        $id = $request->prov;
+        $v = new Satusehat_model();
+        $p = $v->get_kota_kabupaten($id);
+        if ($p->status == 200) {
+            $arr = $p->data;
+            foreach ($arr as $a) {
+                $code = $a->code;
+                $cek = db::select('select count(code) as jlh from mt_lokasi_kabupaten_satu_sehat where code = ?', [$code]);
+                if ($cek[0]->jlh == 0) {
+                    $datakabupaten = [
+                        'code' => $a->code,
+                        'parent_code' => $a->parent_code,
+                        'bps_code' => $a->bps_code,
+                        'name' => $a->name
+                    ];
+                    mt_lokasi_kabupaten_satu_sehat::create($datakabupaten);
                 }
             }
             $data = [

@@ -134,11 +134,9 @@
                     },
                     url: '<?= route('cekorder') ?>',
                     error: function(response) {
-                        spinner.hide()
                         alert('error')
                     },
                     success: function(response) {
-                        spinner.hide()
                         $('.notifikasi').html(response);
                     }
                 });

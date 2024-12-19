@@ -11,7 +11,7 @@
         overflow-y: auto;
     }
 </style>
-<button class="btn btn-danger" onclick="kembali()">
+<button class="btn btn-danger" onclick="location.reload()">
     <i class="bi bi-backspace-fill mr-2"></i> Batal</button>
 <div class="row">
     <div class="col-md-12">
@@ -438,8 +438,8 @@
                                         onclick="simpanpemeriksaan()"><i class="far fa-credit-card"></i> Simpan
                                     </button>
                                     <button type="button" class="btn btn-danger float-right"
-                                        style="margin-right: 5px;" onclick="kembali()">
-                                        <i class="bi bi-backspace-fill"></i> Batal
+                                        style="margin-right: 5px;" onclick="location.reload()">
+                                        <i class="bi bi-backspace-fill"></i> Kembali
                                     </button>
                                 </div>
                             </div>

@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-success" style="margin-top:32px"><i class="bi bi-search mr-1 ml-1"></i>Get Kabupaten</button>
+                            <button class="btn btn-success" style="margin-top:32px" onclick="ambilmasterkabupaten()"><i class="bi bi-search mr-1 ml-1"></i>Get Kabupaten</button>
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-success" style="margin-top:32px"><i class="bi bi-search mr-1 ml-1"></i>Get Kecamatan</button>
+                            <button class="btn btn-success" style="margin-top:32px" onclick="getkecamatan()"><i class="bi bi-search mr-1 ml-1"></i>Get Kecamatan</button>
                         </div>
                     </div>
                 </div>
@@ -146,7 +146,7 @@
                 source: function(request, response) {
                     $.getJSON("<?= route('carikabupaten_byprov') ?>", {
                             namakabupaten: $('#namakabupaten2').val(),
-                            kodeprovinsi2: $('#kodeprovinsi2').val(),
+                            kodeprovinsi2: $('#kodeprovinsi3').val(),
                         },
                         response);
                 },
@@ -182,6 +182,92 @@
                     kecamatan
                 },
                 url: '<?= route('getmasterdesa') ?>',
+                error: function(data) {
+                    spinner.hide()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner.hide()
+                    if (data.kode == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        location.reload()
+                    }
+                }
+            });
+        }
+        function getkecamatan(){
+            kabupaten = $('#kodekabupaten1').val()
+            spinner = $('#loader')
+            spinner.show();
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    kabupaten
+                },
+                url: '<?= route('getmasterkecamatan') ?>',
+                error: function(data) {
+                    spinner.hide()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner.hide()
+                    if (data.kode == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        location.reload()
+                    }
+                }
+            });
+        }
+        function ambilmasterkabupaten(){
+            prov = $('#kodeprovinsi1').val()
+            spinner = $('#loader')
+            spinner.show();
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    prov
+                },
+                url: '<?= route('getmasterkab') ?>',
                 error: function(data) {
                     spinner.hide()
                     Swal.fire({

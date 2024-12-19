@@ -143,4 +143,6 @@ Route::post('/kirimdataunitsatusehat', [MasterController::class, 'kirimdataunits
 Route::post('/caripasienihs', [MasterController::class, 'cariPasienSatusehat'])->name('caripasienihs');
 Route::post('/editpasienihs', [MasterController::class, 'editPasienIHS'])->name('editpasienihs');
 Route::post('/getmasterdesa', [MasterController::class, 'getmasterdesa'])->name('getmasterdesa');
+Route::post('/getmasterkecamatan', [MasterController::class, 'getmasterkecamatan'])->name('getmasterkecamatan');
+Route::post('/getmasterkab', [MasterController::class, 'getmasterkab'])->name('getmasterkab');
 
